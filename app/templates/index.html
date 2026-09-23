@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="bg-gray-50 text-gray-800 font-sans h-screen flex flex-col overflow-hidden">
+<body class="bg-white text-gray-800 font-sans h-screen flex flex-col overflow-hidden">
 
     <!-- PRIVATE AUTH SCREEN -->
     <div id="authScreen" class="fixed inset-0 bg-slate-900 flex items-center justify-center z-50">
@@ -86,55 +86,92 @@
         </div>
     </div>
 
-    <!-- MAIN DASHBOARD -->
-    <div id="appContent" class="hidden flex flex-col h-full overflow-hidden">
-        <header class="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6 shrink-0 shadow-sm">
-            <div class="flex items-center space-x-3">
-                <div class="bg-blue-600 text-white p-2 rounded-lg font-bold text-lg"><i class="fa-solid fa-shield-halved"></i></div>
-                <span class="text-xl font-medium text-gray-700">Phoenix Shield <span id="portalBadge" class="text-xs bg-blue-100 text-blue-600 px-2 py-0.5 rounded-full font-semibold">Private Drive</span></span>
+    <!-- MAIN GOOGLE DRIVE STYLE DASHBOARD -->
+    <div id="appContent" class="hidden flex flex-col h-full overflow-hidden bg-white">
+        
+        <!-- TOP HEADER -->
+        <header class="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-4 shrink-0">
+            <div class="flex items-center space-x-3 w-64">
+                <div class="flex items-center space-x-2">
+                    <img src="https://www.gstatic.com/images/branding/product/1x/drive_2020q4_48dp.png" class="w-8 h-8" alt="Logo">
+                    <span class="text-xl font-normal text-gray-700 tracking-tight">Phoenix Drive</span>
+                </div>
             </div>
             
-            <div class="flex-1 max-w-xl mx-12" id="searchContainer">
-                <div class="relative">
-                    <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400"><i class="fa-solid fa-search"></i></span>
-                    <input type="text" id="searchInput" oninput="filterFiles()" placeholder="Search uploaded files..." class="w-full bg-gray-100 hover:bg-gray-200 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none rounded-full py-2 pl-11 pr-4 text-sm transition">
+            <div class="flex-1 max-w-2xl mx-4" id="searchContainer">
+                <div class="relative bg-gray-100 hover:bg-gray-200 focus-within:bg-white focus-within:shadow-md rounded-full flex items-center px-4 py-2 transition">
+                    <span class="text-gray-500 mr-3"><i class="fa-solid fa-search"></i></span>
+                    <input type="text" id="searchInput" oninput="filterFiles()" placeholder="Search in Drive" class="w-full bg-transparent focus:outline-none text-sm text-gray-700">
+                    <span class="text-gray-500 ml-2 cursor-pointer"><i class="fa-solid fa-sliders"></i></span>
                 </div>
             </div>
 
-            <div class="flex items-center space-x-3">
-                <span id="loggedInUserDisplay" class="text-xs font-semibold text-gray-600 bg-gray-100 px-3 py-1 rounded-full"></span>
-                <button onclick="logout()" class="text-xs bg-red-50 hover:bg-red-100 text-red-600 px-3 py-2 rounded-lg font-medium transition ml-2"><i class="fa-solid fa-power-off mr-1"></i>Logout</button>
+            <div class="flex items-center space-x-3 relative">
+                <button class="text-gray-600 hover:bg-gray-100 p-2.5 rounded-full"><i class="fa-solid fa-gear text-lg"></i></button>
+                <button class="text-gray-600 hover:bg-gray-100 p-2.5 rounded-full"><img src="https://www.gstatic.com/images/branding/product/2x/apps_gcp_48dp.png" class="w-6 h-6 opacity-75" alt="Apps"></button>
+                
+                <!-- Profile Avatar Button -->
+                <div onclick="toggleProfilePopup()" class="w-9 h-9 bg-purple-600 text-white rounded-full flex items-center justify-center font-semibold cursor-pointer shadow-sm hover:opacity-90" id="userAvatarBtn">N</div>
+
+                <!-- Google Drive Style Profile Popup Menu -->
+                <div id="profilePopup" class="hidden absolute right-0 top-12 w-80 bg-white rounded-3xl shadow-2xl border border-gray-200 z-50 p-6 text-center">
+                    <p class="text-xs text-gray-500 font-medium truncate" id="popupEmail">user@phoenixshield.online</p>
+                    <div class="w-16 h-16 bg-blue-600 text-white rounded-full mx-auto flex items-center justify-center text-2xl font-bold my-3 shadow-md" id="popupAvatarLetter">N</div>
+                    <h3 class="text-lg font-bold text-gray-800" id="popupUsername">Nitin Mor</h3>
+                    <p class="text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full inline-block mt-1 font-semibold">Verified Secure Account</p>
+                    
+                    <div class="mt-6 border-t border-gray-100 pt-4 text-left space-y-3">
+                        <div class="text-xs text-gray-600 flex justify-between"><span>Phone:</span> <strong id="popupPhone">+91 9876543210</strong></div>
+                        <div class="text-xs text-gray-600 flex justify-between"><span>DOB:</span> <strong id="popupDob">11/02/2004</strong></div>
+                    </div>
+
+                    <div class="mt-6 pt-4 border-t border-gray-100 flex justify-between items-center">
+                        <button onclick="logout()" class="w-full bg-red-50 hover:bg-red-100 text-red-600 py-2.5 rounded-xl font-medium text-xs transition">Sign out of account</button>
+                    </div>
+                </div>
             </div>
         </header>
 
+        <!-- MAIN BODY CONTAINER -->
         <div class="flex flex-1 overflow-hidden">
-            <!-- Sidebar (Private Drive) -->
-            <aside id="mainSidebar" class="w-64 bg-white border-r border-gray-200 p-4 flex flex-col justify-between shrink-0">
-                <div class="space-y-4">
-                    <button onclick="document.getElementById('fileInput').click()" class="w-full bg-white hover:shadow-md border border-gray-200 text-gray-700 font-medium px-4 py-3 rounded-2xl flex items-center space-x-3 transition">
-                        <span class="text-blue-600 text-lg font-bold">+</span>
-                        <span>Secure Upload</span>
+            
+            <!-- LEFT SIDEBAR (GOOGLE DRIVE STYLE) -->
+            <aside id="mainSidebar" class="w-64 bg-white p-3 flex flex-col justify-between shrink-0 select-none">
+                <div class="space-y-3">
+                    <!-- New Upload Button -->
+                    <button onclick="document.getElementById('fileInput').click()" class="bg-white hover:shadow-lg border border-gray-200 text-gray-700 font-medium px-6 py-3.5 rounded-2xl flex items-center space-x-4 transition shadow-sm group">
+                        <svg class="w-6 h-6" viewBox="0 0 36 36"><path fill="#34A853" d="M16 16v14h4V20z"></path><path fill="#4285F4" d="M30 16H20l-4 4h14z"></path><path fill="#FBBC05" d="M6 16h10l4-4H6z"></path><path fill="#EA4335" d="M20 16V2h-4v14z"></path><path fill="#2684FC" d="M16 16H2v4h14z"></path></svg>
+                        <span class="text-sm font-medium">New</span>
                     </button>
                     <input type="file" id="fileInput" class="hidden" onchange="uploadFile(event)">
 
-                    <button onclick="promptCreateFolder()" class="w-full bg-gray-50 hover:bg-gray-100 border border-gray-200 text-gray-700 text-xs font-medium px-4 py-2.5 rounded-xl flex items-center space-x-2 transition">
-                        <i class="fa-solid fa-folder-plus text-blue-600"></i>
-                        <span>Create New Folder</span>
-                    </button>
+                    <!-- Sidebar Navigation Links -->
+                    <nav class="space-y-0.5 text-sm font-medium">
+                        <a href="#" onclick="switchSection('all', event)" id="nav-all" class="flex items-center space-x-4 px-4 py-2.5 rounded-r-full bg-blue-50 text-blue-700 transition"><i class="fa-solid fa-house w-5"></i><span>Home</span></a>
+                        <a href="#" onclick="switchSection('projects', event)" id="nav-projects" class="flex items-center space-x-4 px-4 py-2.5 rounded-r-full text-gray-700 hover:bg-gray-100 transition"><img src="https://www.gstatic.com/images/branding/product/2x/drive_folder_48dp.png" class="w-5 h-5 opacity-70"><span>Projects</span></a>
+                        <a href="#" onclick="switchSection('mydrive', event)" id="nav-mydrive" class="flex items-center space-x-4 px-4 py-2.5 rounded-r-full text-gray-700 hover:bg-gray-100 transition"><i class="fa-solid fa-hard-drive w-5 text-gray-500"></i><span>My Drive</span></a>
+                        <a href="#" onclick="switchSection('image', event)" id="nav-image" class="flex items-center space-x-4 px-4 py-2.5 rounded-r-full text-gray-700 hover:bg-gray-100 transition"><i class="fa-solid fa-image w-5 text-emerald-600"></i><span>Images</span></a>
+                        <a href="#" onclick="switchSection('video', event)" id="nav-video" class="flex items-center space-x-4 px-4 py-2.5 rounded-r-full text-gray-700 hover:bg-gray-100 transition"><i class="fa-solid fa-video w-5 text-purple-600"></i><span>Videos</span></a>
+                    </nav>
 
-                    <nav class="space-y-1 pt-2">
-                        <a href="#" onclick="switchSection('all', event)" id="nav-all" class="flex items-center space-x-4 px-4 py-2.5 rounded-r-full bg-blue-50 text-blue-700 font-medium text-sm transition"><i class="fa-solid fa-hard-drive"></i><span>Drive Dashboard</span></a>
-                        <a href="#" onclick="switchSection('image', event)" id="nav-image" class="flex items-center space-x-4 px-4 py-2.5 rounded-r-full text-gray-600 hover:bg-gray-100 text-sm transition"><i class="fa-solid fa-image text-emerald-500"></i><span>Images</span></a>
-                        <a href="#" onclick="switchSection('video', event)" id="nav-video" class="flex items-center space-x-4 px-4 py-2.5 rounded-r-full text-gray-600 hover:bg-gray-100 text-sm transition"><i class="fa-solid fa-video text-purple-500"></i><span>Videos</span></a>
+                    <hr class="border-gray-200 my-3">
+
+                    <nav class="space-y-0.5 text-sm text-gray-600">
+                        <a href="#" onclick="promptCreateFolder()" class="flex items-center space-x-4 px-4 py-2 rounded-r-full hover:bg-gray-100 transition"><i class="fa-solid fa-folder-plus w-5 text-amber-500"></i><span>New Folder</span></a>
+                        <a href="#" onclick="switchSection('trash', event)" id="nav-trash" class="flex items-center space-x-4 px-4 py-2 rounded-r-full hover:bg-gray-100 transition"><i class="fa-solid fa-trash w-5 text-gray-500"></i><span>Trash Bin</span></a>
                     </nav>
                 </div>
 
-                <!-- Dynamic Folders List -->
-                <div class="px-2 py-4 border-t border-gray-100">
-                    <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Your Folders</div>
-                    <div id="foldersContainer" class="space-y-1 max-h-36 overflow-y-auto text-xs text-gray-600">
-                        <!-- Loaded dynamically -->
+                <!-- Storage Info Bar -->
+                <div class="px-4 py-3 bg-gray-50 rounded-2xl border border-gray-100 space-y-2">
+                    <div class="flex items-center space-x-3 text-gray-600">
+                        <i class="fa-solid fa-cloud text-blue-500"></i>
+                        <span class="text-xs font-medium">Storage Used</span>
                     </div>
+                    <div class="w-full bg-gray-200 h-1.5 rounded-full overflow-hidden">
+                        <div class="bg-blue-600 h-full w-[12%]"></div>
+                    </div>
+                    <p class="text-[11px] text-gray-400">17.39 GB of 400 GB used</p>
                 </div>
             </aside>
 
@@ -143,42 +180,42 @@
                 <nav class="space-y-1 pt-2">
                     <a href="#" onclick="switchEntTab('mails', event)" id="ent-nav-mails" class="flex items-center space-x-4 px-4 py-2.5 rounded-xl bg-purple-600 text-white font-medium text-sm transition"><i class="fa-solid fa-envelope"></i><span>Mails</span></a>
                     <a href="#" onclick="switchEntTab('tasks', event)" id="ent-nav-tasks" class="flex items-center space-x-4 px-4 py-2.5 rounded-xl text-slate-300 hover:bg-slate-800 text-sm transition"><i class="fa-solid fa-list-check"></i><span>Tasks</span></a>
-                    <a href="#" onclick="switchEntTab('commands', event)" id="ent-nav-commands" class="flex items-center space-x-4 px-4 py-2.5 rounded-xl text-slate-300 hover:bg-slate-800 text-sm transition"><i class="fa-solid fa-terminal"></i><span>Commands</span></a>
-                    <a href="#" onclick="switchEntTab('reports', event)" id="ent-nav-reports" class="flex items-center space-x-4 px-4 py-2.5 rounded-xl text-slate-300 hover:bg-slate-800 text-sm transition"><i class="fa-solid fa-chart-line"></i><span>Reports</span></a>
-                    <a href="#" onclick="switchEntTab('queries', event)" id="ent-nav-queries" class="flex items-center space-x-4 px-4 py-2.5 rounded-xl text-slate-300 hover:bg-slate-800 text-sm transition"><i class="fa-solid fa-circle-question"></i><span>Queries</span></a>
                     <a href="#" onclick="switchEntTab('ids', event)" id="ent-nav-ids" class="flex items-center space-x-4 px-4 py-2.5 rounded-xl text-slate-300 hover:bg-slate-800 text-sm transition border border-red-500/30 text-red-400"><i class="fa-solid fa-shield-virus"></i><span>Traffic IDS & Hackers</span></a>
                 </nav>
             </aside>
 
-            <main class="flex-1 bg-white m-4 rounded-3xl border border-gray-200 p-6 overflow-y-auto flex flex-col shadow-sm">
-                <!-- Private Drive Panel -->
-                <div id="driveContentPanel">
-                    <div id="dropZone" class="border-2 border-dashed border-gray-300 hover:border-blue-500 rounded-2xl p-8 text-center bg-gray-50 transition cursor-pointer mb-8" onclick="document.getElementById('fileInput').click()">
-                        <div class="text-blue-500 text-4xl mb-2"><i class="fa-solid fa-cloud-arrow-up"></i></div>
-                        <h3 class="text-gray-700 font-medium">Drag & drop files, images, or video backups here</h3>
-                        <p class="text-gray-400 text-xs mt-1">Automatic threat anomaly checking active on all uploads</p>
-                    </div>
-
-                    <h1 id="sectionHeading" class="text-sm font-semibold text-gray-500 mb-4 uppercase tracking-wider">Your Uploaded Files & Backups</h1>
-                    <div id="fileListContainer" class="grid grid-cols-3 gap-4"></div>
-                </div>
-
-                <!-- Enterprise Department Panel -->
-                <div id="enterpriseDashboard" class="hidden space-y-6">
-                    <div class="flex justify-between items-center border-b border-gray-200 pb-4">
-                        <div>
-                            <h1 id="deptTitle" class="text-xl font-bold text-slate-900">Department Dashboard</h1>
-                            <p class="text-xs text-slate-500 mt-0.5">Secure Corporate Node Operational Unit</p>
+            <!-- MAIN CONTENT DISPLAY AREA -->
+            <main class="flex-1 bg-white p-6 overflow-y-auto flex flex-col">
+                <div id="driveContentPanel" class="space-y-6">
+                    <h2 class="text-xl font-normal text-gray-700">Welcome to Phoenix Drive</h2>
+                    
+                    <!-- Dynamic Folders Section -->
+                    <div class="space-y-2">
+                        <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Folders</h3>
+                        <div id="foldersContainer" class="grid grid-cols-4 gap-4">
+                            <!-- Folders loaded dynamically -->
                         </div>
                     </div>
 
+                    <!-- Files Section -->
+                    <div class="space-y-3 pt-4">
+                        <h3 id="sectionHeading" class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Suggested Files & Uploads</h3>
+                        <div id="fileListContainer" class="space-y-2">
+                            <!-- File rows loaded dynamically with View & Download options -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Enterprise Panel -->
+                <div id="enterpriseDashboard" class="hidden space-y-6">
+                    <h1 id="deptTitle" class="text-xl font-bold text-slate-900">Department Dashboard</h1>
                     <div id="entTabContent" class="space-y-4"></div>
                 </div>
             </main>
         </div>
     </div>
 
-    <!-- ==================== JAVASCRIPT ==================== -->
+    <!-- JAVASCRIPT LOGIC -->
     <script>
         let isRegisterMode = false;
         let currentUser = '';
@@ -187,7 +224,6 @@
         let currentFilter = 'all';
         let activeFolder = null;
 
-        // --- AUTH ---
         function toggleAuthMode() {
             isRegisterMode = !isRegisterMode;
             document.getElementById('authTitle').innerText = isRegisterMode ? "Create Account" : "Phoenix Shield";
@@ -195,6 +231,11 @@
             document.getElementById('authBtn').innerText = isRegisterMode ? "Register Account" : "Login to Drive";
             document.getElementById('switchAuthText').innerText = isRegisterMode ? "Already have an account? Login" : "Create new account";
             document.getElementById('authMessage').innerText = "";
+        }
+
+        function toggleProfilePopup() {
+            const popup = document.getElementById('profilePopup');
+            popup.classList.toggle('hidden');
         }
 
         async function handleAuth() {
@@ -217,7 +258,10 @@
                         currentUser = data.username;
                         document.getElementById('authScreen').classList.add('hidden');
                         document.getElementById('appContent').classList.remove('hidden');
-                        document.getElementById('loggedInUserDisplay').innerText = "User: " + currentUser;
+                        document.getElementById('userAvatarBtn').innerText = currentUser.charAt(0).toUpperCase();
+                        document.getElementById('popupUsername').innerText = currentUser;
+                        document.getElementById('popupEmail').innerText = currentUser.toLowerCase() + "@phoenixshield.online";
+                        document.getElementById('popupAvatarLetter').innerText = currentUser.charAt(0).toUpperCase();
                         loadFiles();
                         loadFolders();
                     }
@@ -225,7 +269,6 @@
             } catch (err) { console.error(err); }
         }
 
-        // --- DRIVE OPERATIONS ---
         async function loadFiles() {
             if (!currentUser) return;
             try {
@@ -235,25 +278,18 @@
             } catch (err) { console.error("Error loading files:", err); }
         }
 
+        // RENDER FILES IN GOOGLE DRIVE LIST STYLE WITH VIEW & DOWNLOAD OPTIONS
         function renderFiles(files) {
             const container = document.getElementById('fileListContainer');
             container.innerHTML = "";
 
             let filtered = files;
-            // Filter by folder if selected
-            if (activeFolder) {
-                filtered = filtered.filter(f => f.folder_name === activeFolder);
-            }
-
-            // Filter by type (Images/Videos)
-            if (currentFilter === 'image') {
-                filtered = filtered.filter(f => f.file_type === 'image');
-            } else if (currentFilter === 'video') {
-                filtered = filtered.filter(f => f.file_type === 'video');
-            }
+            if (activeFolder) filtered = filtered.filter(f => f.folder_name === activeFolder);
+            if (currentFilter === 'image') filtered = filtered.filter(f => f.file_type === 'image');
+            if (currentFilter === 'video') filtered = filtered.filter(f => f.file_type === 'video');
 
             if (filtered.length === 0) {
-                container.innerHTML = `<p class="text-xs text-gray-400 col-span-3">No files found.</p>`;
+                container.innerHTML = `<p class="text-xs text-gray-400 py-4 text-center">No files found in drive.</p>`;
                 return;
             }
 
@@ -262,19 +298,24 @@
                 if (file.file_type === 'image') iconClass = "fa-file-image text-emerald-500";
                 if (file.file_type === 'video') iconClass = "fa-file-video text-purple-500";
 
-                const card = document.createElement('div');
-                card.className = "border border-gray-200 rounded-xl p-4 hover:shadow-md transition bg-white flex flex-col justify-between";
-                card.innerHTML = `
-                    <div class="flex items-center justify-between mb-3">
-                        <div class="text-2xl"><i class="fa-solid ${iconClass}"></i></div>
-                        <button onclick="deleteFile('${file.filename}')" class="text-gray-400 hover:text-red-500 text-xs"><i class="fa-solid fa-trash"></i></button>
+                const row = document.createElement('div');
+                row.className = "flex items-center justify-between p-3 hover:bg-gray-50 border-b border-gray-100 rounded-xl transition";
+                row.innerHTML = `
+                    <div class="flex items-center space-x-4 flex-1">
+                        <i class="fa-solid ${iconClass} text-lg"></i>
+                        <a href="/uploads/${file.filename}" target="_blank" class="text-sm font-medium text-gray-800 hover:text-blue-600 truncate max-w-xs" title="Click to View">${file.filename}</a>
                     </div>
-                    <div>
-                        <p class="text-sm font-medium text-gray-700 truncate">${file.filename}</p>
-                        <p class="text-xs text-gray-400 mt-0.5">${file.size} • ${file.folder_name !== 'None' ? file.folder_name : 'Root'}</p>
+                    <div class="flex items-center space-x-6 text-xs text-gray-500 w-64">
+                        <span>${file.size}</span>
+                        <span>${file.folder_name !== 'None' ? file.folder_name : 'My Drive'}</span>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <a href="/uploads/${file.filename}" target="_blank" class="bg-gray-100 hover:bg-blue-50 text-gray-700 hover:text-blue-600 px-3 py-1.5 rounded-lg text-xs font-medium transition flex items-center gap-1"><i class="fa-solid fa-eye"></i> View</a>
+                        <a href="/download/${file.filename}" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition flex items-center gap-1"><i class="fa-solid fa-download"></i> Download</a>
+                        <button onclick="deleteFile('${file.filename}')" class="text-gray-400 hover:text-red-500 p-2"><i class="fa-solid fa-trash"></i></button>
                     </div>
                 `;
-                container.appendChild(card);
+                container.appendChild(row);
             });
         }
 
@@ -288,19 +329,7 @@
             if (event) event.preventDefault();
             activeFolder = null;
             loadFolders();
-
-            ['all', 'image', 'video'].forEach(s => {
-                const el = document.getElementById(`nav-${s}`);
-                if (el) el.className = "flex items-center space-x-4 px-4 py-2.5 rounded-r-full text-gray-600 hover:bg-gray-100 text-sm transition";
-            });
-            document.getElementById(`nav-${section}`).className = "flex items-center space-x-4 px-4 py-2.5 rounded-r-full bg-blue-50 text-blue-700 font-medium text-sm transition";
-
             currentFilter = section;
-            const heading = document.getElementById('sectionHeading');
-            if (section === 'all') heading.innerText = "Your Uploaded Files & Backups";
-            if (section === 'image') heading.innerText = "Scanned Safe Images";
-            if (section === 'video') heading.innerText = "Video Backups";
-            
             renderFiles(allFiles);
         }
 
@@ -315,23 +344,19 @@
 
             try {
                 const res = await fetch('/api/private/upload', { method: 'POST', body: formData });
-                if (res.ok) {
-                    loadFiles();
-                } else {
-                    alert("Upload failed.");
-                }
+                if (res.ok) loadFiles();
+                else alert("Upload failed.");
             } catch (err) { console.error(err); }
         }
 
         async function deleteFile(filename) {
-            if (!confirm(`Are you sure you want to delete "${filename}"?`)) return;
+            if (!confirm(`Delete "${filename}"?`)) return;
             try {
                 const res = await fetch(`/api/private/files/${currentUser}/${filename}`, { method: 'DELETE' });
                 if (res.ok) loadFiles();
             } catch (err) { console.error(err); }
         }
 
-        // --- FOLDERS ---
         async function loadFolders() {
             if (!currentUser) return;
             try {
@@ -340,29 +365,27 @@
                 const container = document.getElementById('foldersContainer');
                 container.innerHTML = "";
                 if (folders.length === 0) {
-                    container.innerHTML = `<span class="text-gray-400 italic px-2">No custom folders</span>`;
+                    container.innerHTML = `<span class="text-gray-400 text-xs italic">No folders created</span>`;
                     return;
                 }
                 folders.forEach(folder => {
-                    const div = document.createElement('div');
-                    div.className = `flex items-center space-x-2 py-1.5 px-2 hover:bg-gray-100 rounded cursor-pointer transition ${activeFolder === folder ? 'bg-blue-50 text-blue-600 font-semibold' : ''}`;
-                    div.innerHTML = `<i class="fa-solid fa-folder text-amber-400"></i><span class="truncate">${folder}</span>`;
-                    div.onclick = () => selectFolder(folder);
-                    container.appendChild(div);
+                    const card = document.createElement('div');
+                    card.className = "flex items-center space-x-3 p-3 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-2xl cursor-pointer transition";
+                    card.innerHTML = `<i class="fa-solid fa-folder text-amber-400 text-lg"></i><span class="text-sm font-medium text-gray-700 truncate">${folder}</span>`;
+                    card.onclick = () => selectFolder(folder);
+                    container.appendChild(card);
                 });
             } catch (err) { console.error("Error loading folders:", err); }
         }
 
         function selectFolder(folderName) {
             activeFolder = activeFolder === folderName ? null : folderName;
-            loadFolders();
-            document.getElementById('sectionHeading').innerText = activeFolder ? `Folder: ${activeFolder}` : "Your Uploaded Files & Backups";
             renderFiles(allFiles);
         }
 
         async function promptCreateFolder() {
             if (!currentUser) return;
-            const folderName = prompt("Enter new folder name:");
+            const folderName = prompt("Enter folder name:");
             if (!folderName) return;
             try {
                 const res = await fetch('/api/private/folders', {
@@ -374,185 +397,34 @@
             } catch (err) { console.error(err); }
         }
 
-        // --- ENTERPRISE OPERATIONS ---
-        function openEnterprisePortal() {
-            document.getElementById('enterpriseModal').classList.remove('hidden');
-            document.getElementById('entKeyStep').classList.remove('hidden');
-            document.getElementById('entDeptStep').classList.add('hidden');
-        }
+        function openEnterprisePortal() { document.getElementById('enterpriseModal').classList.remove('hidden'); }
         function closeEnterprisePortal() { document.getElementById('enterpriseModal').classList.add('hidden'); }
 
         async function submitEnterpriseKey() {
             const key = document.getElementById('enterpriseKeyInput').value;
-            const msg = document.getElementById('enterpriseKeyMsg');
-            try {
-                const res = await fetch('/api/enterprise/verify-key', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ key })
-                });
-                if (res.ok) {
-                    document.getElementById('entKeyStep').classList.add('hidden');
-                    document.getElementById('entDeptStep').classList.remove('hidden');
-                } else { msg.innerText = "Invalid license key!"; }
-            } catch (e) { msg.innerText = "Connection error."; }
+            const res = await fetch('/api/enterprise/verify-key', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ key }) });
+            if (res.ok) {
+                document.getElementById('entKeyStep').classList.add('hidden');
+                document.getElementById('entDeptStep').classList.remove('hidden');
+            } else { document.getElementById('enterpriseKeyMsg').innerText = "Invalid key!"; }
         }
 
         function loginDepartment() {
-            const dept = document.getElementById('deptSelect').value;
-            const deptId = document.getElementById('deptIdInput').value;
-            if (!deptId) { alert("Please enter Department ID!"); return; }
-
-            currentDept = dept;
-            currentUser = deptId;
+            currentDept = document.getElementById('deptSelect').value;
+            currentUser = document.getElementById('deptIdInput').value;
             closeEnterprisePortal();
-
             document.getElementById('authScreen').classList.add('hidden');
             document.getElementById('appContent').classList.remove('hidden');
-            document.getElementById('loggedInUserDisplay').innerText = `Dept: ${currentDept} (${currentUser})`;
-            document.getElementById('portalBadge').innerText = "Corporate Enterprise Hub";
-            document.getElementById('searchContainer').classList.add('hidden');
             document.getElementById('mainSidebar').classList.add('hidden');
             document.getElementById('entSidebar').classList.remove('hidden');
             document.getElementById('driveContentPanel').classList.add('hidden');
             document.getElementById('enterpriseDashboard').classList.remove('hidden');
-            document.getElementById('deptTitle').innerText = `${currentDept} - Operational Dashboard`;
-
-            switchEntTab('mails', null);
+            document.getElementById('deptTitle').innerText = `${currentDept} - Hub`;
         }
 
-        function switchEntTab(tab, event) {
-            if (event) event.preventDefault();
-            ['mails', 'tasks', 'commands', 'reports', 'queries', 'ids'].forEach(t => {
-                const el = document.getElementById(`ent-nav-${t}`);
-                if (el) el.className = "flex items-center space-x-4 px-4 py-2.5 rounded-xl text-slate-300 hover:bg-slate-800 text-sm transition";
-            });
-            document.getElementById(`ent-nav-${tab}`).className = "flex items-center space-x-4 px-4 py-2.5 rounded-xl bg-purple-600 text-white font-medium text-sm transition";
-
-            const container = document.getElementById('entTabContent');
-            if (tab === 'mails') {
-                container.innerHTML = `<h3 class="font-semibold text-slate-800 mb-2">Incoming Department Mails</h3><div class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs space-y-2"><p><b>From: Board of Directors</b> - Review security compliance logs.</p></div>`;
-            } else if (tab === 'tasks') {
-                container.innerHTML = `<h3 class="font-semibold text-slate-800 mb-2">Active Tasks</h3><div class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs space-y-2"><p>✅ Monitor inbound traffic vectors.</p></div>`;
-            } else if (tab === 'commands') {
-                container.innerHTML = `<h3 class="font-semibold text-slate-800 mb-2">Pending Execution Commands</h3><div class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs space-y-2"><p class="font-mono text-blue-600">$ block-suspicious-ips --auto</p></div>`;
-            } else if (tab === 'reports') {
-                container.innerHTML = `<h3 class="font-semibold text-slate-800 mb-2">Analytics Reports</h3><div class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs"><p>Efficiency: <strong>99.1%</strong></p></div>`;
-            } else if (tab === 'queries') {
-                loadQueries();
-            } else if (tab === 'ids') {
-                loadTrafficIDS();
-            }
-        }
-
-        // --- TRAFFIC IDS ---
-        async function loadTrafficIDS() {
-            const container = document.getElementById('entTabContent');
-            container.innerHTML = `
-                <div class="space-y-4">
-                    <div class="flex justify-between items-center">
-                        <h3 class="font-semibold text-slate-800">Live Traffic & Intrusion Detection (IDS)</h3>
-                        <button onclick="loadTrafficIDS()" class="bg-slate-800 text-white text-xs px-3 py-1.5 rounded-lg hover:bg-slate-700">Refresh Logs</button>
-                    </div>
-                    <p class="text-xs text-slate-500">Real-time inspection of inbound network requests and automated hacker signature matching.</p>
-                    <div class="overflow-x-auto border border-slate-200 rounded-xl">
-                        <table class="w-full text-left text-xs">
-                            <thead class="bg-slate-100 text-slate-700 uppercase">
-                                <tr>
-                                    <th class="p-3">IP Address</th>
-                                    <th class="p-3">Method / Endpoint</th>
-                                    <th class="p-3">Status</th>
-                                    <th class="p-3">Threat Detection</th>
-                                </tr>
-                            </thead>
-                            <tbody id="trafficTableBody" class="divide-y divide-slate-200">
-                                <tr><td colspan="4" class="p-4 text-center text-slate-400">Loading traffic logs...</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            `;
-            try {
-                const res = await fetch('/api/security/traffic-logs');
-                const logs = await res.json();
-                const tbody = document.getElementById('trafficTableBody');
-                if (logs.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-slate-400">No traffic recorded yet.</td></tr>`;
-                    return;
-                }
-                tbody.innerHTML = logs.map(l => {
-                    const isHack = l.threat.includes("Hacker");
-                    return `
-                        <tr class="${isHack ? 'bg-red-50' : 'hover:bg-slate-50'}">
-                            <td class="p-3 font-mono font-bold">${l.ip}</td>
-                            <td class="p-3"><span class="bg-slate-200 px-1.5 py-0.5 rounded font-mono mr-1">${l.method}</span> ${l.endpoint}</td>
-                            <td class="p-3">${l.status}</td>
-                            <td class="p-3"><span class="px-2 py-1 rounded font-semibold ${isHack ? 'bg-red-100 text-red-700 animate-pulse' : 'bg-emerald-100 text-emerald-700'}">${l.threat}</span></td>
-                        </tr>
-                    `;
-                }).join('');
-            } catch (e) { console.error(e); }
-        }
-
-        // --- CROSS-DEPARTMENT QUERIES ---
-        async function loadQueries() {
-            const container = document.getElementById('entTabContent');
-            container.innerHTML = `
-                <div class="space-y-4">
-                    <h3 class="font-semibold text-slate-800">Raise Cross-Department Query</h3>
-                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3 text-xs">
-                        <select id="targetDept" class="w-full bg-white border border-slate-300 p-2 rounded-lg">
-                            <option value="Human Resources (HR)">Human Resources (HR)</option>
-                            <option value="Finance & Accounts">Finance & Accounts</option>
-                            <option value="Information Technology (IT)">Information Technology (IT)</option>
-                            <option value="Cybersecurity">Cybersecurity</option>
-                            <option value="Sales">Sales</option>
-                        </select>
-                        <textarea id="queryText" placeholder="Type query or issue..." class="w-full bg-white border border-slate-300 p-2 rounded-lg"></textarea>
-                        <button onclick="sendQuery()" class="bg-purple-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-purple-500">Submit Query</button>
-                    </div>
-                    <h3 class="font-semibold text-slate-800 mt-4">Incoming Queries to ${currentDept}</h3>
-                    <div id="incomingQueriesList" class="space-y-2 text-xs">Loading...</div>
-                </div>
-            `;
-            try {
-                const res = await fetch(`/api/enterprise/queries/${encodeURIComponent(currentDept)}`);
-                const queries = await res.json();
-                const listDiv = document.getElementById('incomingQueriesList');
-                if (queries.length === 0) { listDiv.innerHTML = "<p class='text-slate-400 italic'>No incoming queries.</p>"; return; }
-                listDiv.innerHTML = queries.map(q => `<div class='bg-white p-3 rounded-lg border border-slate-200'><b>From:</b> ${q.from_dept} <br><b>Query:</b> ${q.query_text} <br><span class='text-amber-600 font-semibold'>Status: ${q.status}</span></div>`).join('');
-            } catch (e) { console.error(e); }
-        }
-
-        async function sendQuery() {
-            const targetDept = document.getElementById('targetDept').value;
-            const query_text = document.getElementById('queryText').value;
-            if (!query_text) return;
-            try {
-                const res = await fetch('/api/enterprise/query', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ from_dept: currentDept, to_dept: targetDept, query_text })
-                });
-                if (res.ok) { alert("Query sent!"); loadQueries(); }
-            } catch (e) { alert("Error sending query."); }
-        }
-
-        // --- GLOBAL ---
         function logout() {
-            currentUser = ''; currentDept = ''; activeFolder = null;
-            document.getElementById('appContent').classList.add('hidden');
-            document.getElementById('authScreen').classList.remove('hidden');
-            document.getElementById('mainSidebar').classList.remove('hidden');
-            document.getElementById('entSidebar').classList.add('hidden');
-            document.getElementById('driveContentPanel').classList.remove('hidden');
-            document.getElementById('searchContainer').classList.remove('hidden');
-            document.getElementById('enterpriseDashboard').classList.add('hidden');
-            
-            document.getElementById('usernameInput').value = '';
-            document.getElementById('passwordInput').value = '';
-            document.getElementById('enterpriseKeyInput').value = '';
-            document.getElementById('deptIdInput').value = '';
+            currentUser = ''; currentDept = '';
+            location.reload();
         }
     </script>
 </body>
