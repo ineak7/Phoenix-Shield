@@ -18,7 +18,10 @@ DB_FILE = "app/users.db"
 def init_db():
     conn = sqlite3.connect(DB_FILE)
     cursor = conn.cursor()
-    # Users table updated with profile & verification fields
+    
+    # Drop and recreate users table to support new profile & verification columns cleanly
+    cursor.execute('DROP TABLE IF EXISTS users')
+    
     cursor.execute('''CREATE TABLE IF NOT EXISTS users (
                         username TEXT PRIMARY KEY, 
                         password TEXT,
@@ -143,7 +146,7 @@ def upload_user_data(file: UploadFile = File(...), username: str = Form(...), fo
 
     return {"filename": file.filename, "message": "Uploaded & Secured!"}
 
-# --- Fixed File Download Route ---
+# --- File Download Route ---
 @app.get("/download/{filename}")
 def download_file(filename: str):
     file_path = os.path.join(UPLOAD_DIR, filename)
@@ -151,7 +154,7 @@ def download_file(filename: str):
         return FileResponse(file_path, media_type='application/octet-stream', filename=filename)
     raise HTTPException(status_code=404, detail="File not found")
 
-# --- Fixed File View / Preview Route ---
+# --- File View / Preview Route ---
 @app.get("/uploads/{filename}")
 def view_file(filename: str):
     file_path = os.path.join(UPLOAD_DIR, filename)
