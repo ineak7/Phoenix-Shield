@@ -19,7 +19,9 @@ def init_db():
     conn = sqlite3.connect(DB_FILE)
     cursor = conn.cursor()
     
-    # Safe table initializations supporting profile, verification, folders, files, and trash bin
+    # Safe table initializations with table recreation to prevent schema column missing errors
+    cursor.execute('DROP TABLE IF EXISTS users')
+    
     cursor.execute('''CREATE TABLE IF NOT EXISTS users (
                         username TEXT PRIMARY KEY, 
                         password TEXT,
