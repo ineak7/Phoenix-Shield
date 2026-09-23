@@ -9,7 +9,7 @@ import time
 
 from app.anomaly_detection import detect_payload_anomaly, analyze_file_anomaly
 
-app = FastAPI(title="Phoenix Shield API", version="4.2.0")
+app = FastAPI(title="Phoenix Shield API", version="4.3.0")
 
 UPLOAD_DIR = "app/uploads"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
@@ -19,9 +19,7 @@ def init_db():
     conn = sqlite3.connect(DB_FILE)
     cursor = conn.cursor()
     
-    # Drop and recreate tables to support new profile, verification, & phone/dob columns cleanly
-    cursor.execute('DROP TABLE IF EXISTS users')
-    
+    # Safe table initializations supporting profile, verification, folders, files, and trash bin
     cursor.execute('''CREATE TABLE IF NOT EXISTS users (
                         username TEXT PRIMARY KEY, 
                         password TEXT,
@@ -29,11 +27,27 @@ def init_db():
                         dob TEXT,
                         is_verified INTEGER DEFAULT 0
                     )''')
-    cursor.execute('''CREATE TABLE IF NOT EXISTS folders (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, username TEXT)''')
-    cursor.execute('''CREATE TABLE IF NOT EXISTS dept_queries (id INTEGER PRIMARY KEY AUTOINCREMENT, from_dept TEXT, to_dept TEXT, query_text TEXT, status TEXT)''')
-    cursor.execute('''CREATE TABLE IF NOT EXISTS traffic_logs (id INTEGER PRIMARY KEY AUTOINCREMENT, ip_address TEXT, endpoint TEXT, method TEXT, status TEXT, threat_level TEXT, timestamp REAL)''')
-    
-    # Files table with folder support
+    cursor.execute('''CREATE TABLE IF NOT EXISTS folders (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT, 
+                        name TEXT, 
+                        username TEXT
+                    )''')
+    cursor.execute('''CREATE TABLE IF NOT EXISTS dept_queries (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT, 
+                        from_dept TEXT, 
+                        to_dept TEXT, 
+                        query_text TEXT, 
+                        status TEXT
+                    )''')
+    cursor.execute('''CREATE TABLE IF NOT EXISTS traffic_logs (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT, 
+                        ip_address TEXT, 
+                        endpoint TEXT, 
+                        method TEXT, 
+                        status TEXT, 
+                        threat_level TEXT, 
+                        timestamp REAL
+                    )''')
     cursor.execute('''CREATE TABLE IF NOT EXISTS files (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         filename TEXT,
@@ -42,8 +56,15 @@ def init_db():
                         file_type TEXT,
                         size_str TEXT
                     )''')
+    cursor.execute('''CREATE TABLE IF NOT EXISTS trash_files (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        filename TEXT,
+                        username TEXT,
+                        size_str TEXT
+                    )''')
     
-    cursor.execute("INSERT OR IGNORE INTO users (username, password, phone, dob, is_verified) VALUES (?, ?, ?, ?, ?)", ("NitinMor", "Nitin@1234", "+919876543210", "11/02/2004", 1))
+    cursor.execute("INSERT OR IGNORE INTO users (username, password, phone, dob, is_verified) VALUES (?, ?, ?, ?, ?)", 
+                   ("NitinMor", "Nitin@1234", "+919876543210", "11/02/2004", 1))
     conn.commit()
     conn.close()
 
@@ -177,17 +198,30 @@ def list_files(username: str):
     conn.close()
     return [{"filename": r[0], "folder_name": r[1], "file_type": r[2], "size": r[3]} for r in rows]
 
+# --- Delete File & Move to Trash ---
 @app.delete("/api/private/files/{username}/{filename}")
 def delete_file(username: str, filename: str):
-    file_path = os.path.join(UPLOAD_DIR, filename)
-    if os.path.exists(file_path):
-        os.remove(file_path)
     conn = sqlite3.connect(DB_FILE)
     cursor = conn.cursor()
-    cursor.execute("DELETE FROM files WHERE username = ? AND filename = ?", (username, filename))
-    conn.commit()
+    cursor.execute("SELECT size_str FROM files WHERE username = ? AND filename = ?", (username, filename))
+    file_row = cursor.fetchone()
+    
+    if file_row:
+        cursor.execute("INSERT INTO trash_files (filename, username, size_str) VALUES (?, ?, ?)", (filename, username, file_row[0]))
+        cursor.execute("DELETE FROM files WHERE username = ? AND filename = ?", (username, filename))
+        conn.commit()
+    
     conn.close()
-    return {"message": "Deleted"}
+    return {"message": "Moved to Trash"}
+
+@app.get("/api/private/trash/{username}")
+def get_trash_files(username: str):
+    conn = sqlite3.connect(DB_FILE)
+    cursor = conn.cursor()
+    cursor.execute("SELECT filename, size_str FROM trash_files WHERE username = ?", (username,))
+    rows = cursor.fetchall()
+    conn.close()
+    return [{"filename": r[0], "size": r[1]} for r in rows]
 
 @app.post("/api/private/folders")
 def create_folder(folder: FolderCreate):
@@ -206,6 +240,17 @@ def list_folders(username: str):
     rows = cursor.fetchall()
     conn.close()
     return [row[0] for row in rows]
+
+# --- Delete Folder Route ---
+@app.delete("/api/private/folders/{username}/{foldername}")
+def delete_folder(username: str, foldername: str):
+    conn = sqlite3.connect(DB_FILE)
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM folders WHERE username = ? AND name = ?", (username, foldername))
+    cursor.execute("DELETE FROM files WHERE username = ? AND folder_name = ?", (username, foldername))
+    conn.commit()
+    conn.close()
+    return {"message": "Folder deleted successfully"}
 
 @app.post("/api/enterprise/verify-key")
 def verify_enterprise_key(payload: dict):
