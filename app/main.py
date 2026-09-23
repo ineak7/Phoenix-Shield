@@ -1,5 +1,5 @@
-from fastapi import FastAPI, Request, HTTPException, UploadFile, File, Header, Form
-from fastapi.responses import HTMLResponse
+from fastapi import FastAPI, Request, HTTPException, UploadFile, File, Form
+from fastapi.responses import HTMLResponse, FileResponse
 from pydantic import BaseModel
 import shutil
 import os
@@ -18,12 +18,19 @@ DB_FILE = "app/users.db"
 def init_db():
     conn = sqlite3.connect(DB_FILE)
     cursor = conn.cursor()
-    cursor.execute('''CREATE TABLE IF NOT EXISTS users (username TEXT PRIMARY KEY, password TEXT)''')
+    # Users table updated with profile & verification fields
+    cursor.execute('''CREATE TABLE IF NOT EXISTS users (
+                        username TEXT PRIMARY KEY, 
+                        password TEXT,
+                        phone TEXT,
+                        dob TEXT,
+                        is_verified INTEGER DEFAULT 0
+                    )''')
     cursor.execute('''CREATE TABLE IF NOT EXISTS folders (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, username TEXT)''')
     cursor.execute('''CREATE TABLE IF NOT EXISTS dept_queries (id INTEGER PRIMARY KEY AUTOINCREMENT, from_dept TEXT, to_dept TEXT, query_text TEXT, status TEXT)''')
     cursor.execute('''CREATE TABLE IF NOT EXISTS traffic_logs (id INTEGER PRIMARY KEY AUTOINCREMENT, ip_address TEXT, endpoint TEXT, method TEXT, status TEXT, threat_level TEXT, timestamp REAL)''')
     
-    # Files table updated with folder support
+    # Files table with folder support
     cursor.execute('''CREATE TABLE IF NOT EXISTS files (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         filename TEXT,
@@ -33,7 +40,7 @@ def init_db():
                         size_str TEXT
                     )''')
     
-    cursor.execute("INSERT OR REPLACE INTO users (username, password) VALUES (?, ?)", ("NitinMor", "Nitin@1234"))
+    cursor.execute("INSERT OR IGNORE INTO users (username, password, is_verified) VALUES (?, ?, ?)", ("NitinMor", "Nitin@1234", 1))
     conn.commit()
     conn.close()
 
@@ -65,6 +72,8 @@ async def monitor_traffic(request: Request, call_next):
 class UserCredentials(BaseModel):
     username: str
     password: str
+    phone: str = None
+    dob: str = None
 
 class FolderCreate(BaseModel):
     name: str
@@ -88,13 +97,14 @@ def register_user(creds: UserCredentials):
     conn = sqlite3.connect(DB_FILE)
     cursor = conn.cursor()
     try:
-        cursor.execute("INSERT INTO users (username, password) VALUES (?, ?)", (creds.username, creds.password))
+        cursor.execute("INSERT INTO users (username, password, phone, dob, is_verified) VALUES (?, ?, ?, ?, ?)", 
+                       (creds.username, creds.password, creds.phone, creds.dob, 0))
         conn.commit()
     except sqlite3.IntegrityError:
         conn.close()
         raise HTTPException(status_code=400, detail="Username already exists!")
     conn.close()
-    return {"message": "Account created successfully!"}
+    return {"message": "Account created successfully! Please verify your email."}
 
 @app.post("/api/private/login")
 def login_user(creds: UserCredentials):
@@ -107,7 +117,7 @@ def login_user(creds: UserCredentials):
         return {"message": "Login successful", "username": creds.username}
     raise HTTPException(status_code=401, detail="Invalid credentials!")
 
-# --- Updated File Upload with Folder & User Mapping ---
+# --- File Upload Route ---
 @app.post("/api/private/upload")
 def upload_user_data(file: UploadFile = File(...), username: str = Form(...), folder_name: str = Form("None")):
     file_path = os.path.join(UPLOAD_DIR, file.filename)
@@ -132,6 +142,22 @@ def upload_user_data(file: UploadFile = File(...), username: str = Form(...), fo
     conn.close()
 
     return {"filename": file.filename, "message": "Uploaded & Secured!"}
+
+# --- Fixed File Download Route ---
+@app.get("/download/{filename}")
+def download_file(filename: str):
+    file_path = os.path.join(UPLOAD_DIR, filename)
+    if os.path.exists(file_path):
+        return FileResponse(file_path, media_type='application/octet-stream', filename=filename)
+    raise HTTPException(status_code=404, detail="File not found")
+
+# --- Fixed File View / Preview Route ---
+@app.get("/uploads/{filename}")
+def view_file(filename: str):
+    file_path = os.path.join(UPLOAD_DIR, filename)
+    if os.path.exists(file_path):
+        return FileResponse(file_path)
+    raise HTTPException(status_code=404, detail="File not found")
 
 @app.get("/api/private/files/{username}")
 def list_files(username: str):
