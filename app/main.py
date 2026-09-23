@@ -9,7 +9,7 @@ import time
 
 from app.anomaly_detection import detect_payload_anomaly, analyze_file_anomaly
 
-app = FastAPI(title="Phoenix Shield API", version="4.1.0")
+app = FastAPI(title="Phoenix Shield API", version="4.2.0")
 
 UPLOAD_DIR = "app/uploads"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
@@ -19,7 +19,7 @@ def init_db():
     conn = sqlite3.connect(DB_FILE)
     cursor = conn.cursor()
     
-    # Drop and recreate users table to support new profile & verification columns cleanly
+    # Drop and recreate tables to support new profile, verification, & phone/dob columns cleanly
     cursor.execute('DROP TABLE IF EXISTS users')
     
     cursor.execute('''CREATE TABLE IF NOT EXISTS users (
@@ -43,7 +43,7 @@ def init_db():
                         size_str TEXT
                     )''')
     
-    cursor.execute("INSERT OR IGNORE INTO users (username, password, is_verified) VALUES (?, ?, ?)", ("NitinMor", "Nitin@1234", 1))
+    cursor.execute("INSERT OR IGNORE INTO users (username, password, phone, dob, is_verified) VALUES (?, ?, ?, ?, ?)", ("NitinMor", "Nitin@1234", "+919876543210", "11/02/2004", 1))
     conn.commit()
     conn.close()
 
@@ -107,17 +107,23 @@ def register_user(creds: UserCredentials):
         conn.close()
         raise HTTPException(status_code=400, detail="Username already exists!")
     conn.close()
-    return {"message": "Account created successfully! Please verify your email."}
+    return {"message": "Account created successfully! Verification email dispatched to corporate inbox."}
 
 @app.post("/api/private/login")
 def login_user(creds: UserCredentials):
     conn = sqlite3.connect(DB_FILE)
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM users WHERE username = ? AND password = ?", (creds.username, creds.password))
+    cursor.execute("SELECT username, phone, dob, is_verified FROM users WHERE username = ? AND password = ?", (creds.username, creds.password))
     user = cursor.fetchone()
     conn.close()
     if user:
-        return {"message": "Login successful", "username": creds.username}
+        return {
+            "message": "Login successful", 
+            "username": user[0],
+            "phone": user[1] or "+91 9876543210",
+            "dob": user[2] or "11/02/2004",
+            "is_verified": user[3]
+        }
     raise HTTPException(status_code=401, detail="Invalid credentials!")
 
 # --- File Upload Route ---
