@@ -9,10 +9,10 @@
 </head>
 <body class="bg-white text-gray-800 font-sans h-screen flex flex-col overflow-hidden">
 
-    <!-- PRIVATE AUTH SCREEN -->
+    <!-- PRIVATE AUTH & ADVANCED REGISTRATION SCREEN -->
     <div id="authScreen" class="fixed inset-0 bg-slate-900 flex items-center justify-center z-50">
-        <div class="bg-white p-10 rounded-3xl shadow-2xl w-[420px] border border-gray-100">
-            <div class="text-center mb-8">
+        <div class="bg-white p-10 rounded-3xl shadow-2xl w-[440px] border border-gray-100 max-h-[90vh] overflow-y-auto">
+            <div class="text-center mb-6">
                 <div class="bg-blue-600 text-white w-14 h-14 rounded-2xl mx-auto flex items-center justify-center text-2xl font-bold mb-3 shadow-lg shadow-blue-500/30">
                     <i class="fa-solid fa-shield-halved"></i>
                 </div>
@@ -20,14 +20,32 @@
                 <p id="authSubtitle" class="text-xs text-gray-400 mt-1">Private Encrypted Cloud Drive Access</p>
             </div>
 
-            <div class="space-y-4">
+            <div class="space-y-3">
+                <!-- Registration Specific Extra Fields -->
+                <div id="regExtraFields" class="hidden space-y-3">
+                    <div>
+                        <label class="text-xs font-semibold text-gray-600">Corporate Email ID</label>
+                        <input type="email" id="emailInput" placeholder="name@phoenixshield.online" class="w-full mt-1 bg-gray-50 border border-gray-300 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="text-xs font-semibold text-gray-600">Phone Number</label>
+                            <input type="text" id="phoneInput" placeholder="+91 98765..." class="w-full mt-1 bg-gray-50 border border-gray-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="text-xs font-semibold text-gray-600">Date of Birth</label>
+                            <input type="text" id="dobInput" placeholder="DD/MM/YYYY" class="w-full mt-1 bg-gray-50 border border-gray-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                    </div>
+                </div>
+
                 <div>
                     <label class="text-xs font-semibold text-gray-600">Username</label>
                     <input type="text" id="usernameInput" placeholder="Enter username" class="w-full mt-1 bg-gray-50 border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
                 </div>
                 <div>
                     <label class="text-xs font-semibold text-gray-600">Password</label>
-                    <input type="password" id="passwordInput" placeholder="Enter password" class="w-full mt-1 bg-gray-50 border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <input type="password" id="passwordInput" placeholder="Enter secure password" class="w-full mt-1 bg-gray-50 border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
                 </div>
                 <div id="authMessage" class="text-xs text-red-500 text-center font-medium"></div>
 
@@ -55,7 +73,6 @@
                 <button onclick="closeEnterprisePortal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
 
-            <!-- Step 1: Key verification -->
             <div id="entKeyStep" class="space-y-4">
                 <div>
                     <label class="text-xs font-semibold text-slate-400">Corporate License Key</label>
@@ -65,7 +82,6 @@
                 <button onclick="submitEnterpriseKey()" class="w-full bg-purple-600 hover:bg-purple-500 text-white font-semibold py-3 rounded-xl transition text-sm">Verify License Key</button>
             </div>
 
-            <!-- Step 2: Department Selection -->
             <div id="entDeptStep" class="hidden space-y-4">
                 <div>
                     <label class="text-xs font-semibold text-slate-400">Select Corporate Department</label>
@@ -104,14 +120,11 @@
                 <div class="relative bg-gray-100 hover:bg-gray-200 focus-within:bg-white focus-within:shadow-md rounded-full flex items-center px-4 py-2 transition">
                     <span class="text-gray-500 mr-3"><i class="fa-solid fa-search"></i></span>
                     <input type="text" id="searchInput" oninput="filterFiles()" placeholder="Search in Drive or Enterprise Hub" class="w-full bg-transparent focus:outline-none text-sm text-gray-700">
-                    <span class="text-gray-500 ml-2 cursor-pointer"><i class="fa-solid fa-sliders"></i></span>
                 </div>
             </div>
 
             <div class="flex items-center space-x-3 relative">
                 <button class="text-gray-600 hover:bg-gray-100 p-2.5 rounded-full"><i class="fa-solid fa-gear text-lg"></i></button>
-                
-                <!-- Fixed User Avatar Profile Button -->
                 <div onclick="toggleProfilePopup()" class="w-9 h-9 bg-blue-600 text-white rounded-full flex items-center justify-center font-semibold cursor-pointer shadow-sm hover:opacity-90" id="userAvatarBtn">N</div>
 
                 <!-- Profile Popup Menu -->
@@ -136,7 +149,7 @@
         <!-- MAIN BODY CONTAINER -->
         <div class="flex flex-1 overflow-hidden">
             
-            <!-- LEFT SIDEBAR (PRIVATE DRIVE) -->
+            <!-- LEFT SIDEBAR -->
             <aside id="mainSidebar" class="w-64 bg-white p-3 flex flex-col justify-between shrink-0 select-none">
                 <div class="space-y-3">
                     <button onclick="document.getElementById('fileInput').click()" class="bg-white hover:shadow-lg border border-gray-200 text-gray-700 font-medium px-6 py-3.5 rounded-2xl flex items-center space-x-4 transition shadow-sm group">
@@ -172,7 +185,7 @@
                 </div>
             </aside>
 
-            <!-- ENTERPRISE CONNECT SIDEBAR (FULL SPEC IMPLEMENTED) -->
+            <!-- ENTERPRISE SIDEBAR -->
             <aside id="entSidebar" class="hidden w-64 bg-slate-900 text-slate-200 border-r border-slate-800 p-3 flex flex-col justify-between shrink-0 overflow-y-auto">
                 <nav class="space-y-1 text-xs">
                     <div class="text-[10px] uppercase tracking-wider text-slate-500 px-3 py-1 font-bold">Enterprise Connect</div>
@@ -198,9 +211,9 @@
             <main class="flex-1 bg-white p-6 overflow-y-auto flex flex-col">
                 <!-- Private Drive Panel -->
                 <div id="driveContentPanel" class="space-y-6">
-                    <h2 class="text-xl font-normal text-gray-700">Welcome to Phoenix Drive</h2>
+                    <h2 id="sectionHeadingTitle" class="text-xl font-normal text-gray-700">Welcome to Phoenix Drive</h2>
                     
-                    <div class="space-y-2">
+                    <div id="foldersSectionWrapper" class="space-y-2">
                         <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Folders</h3>
                         <div id="foldersContainer" class="grid grid-cols-4 gap-4"></div>
                     </div>
@@ -235,9 +248,10 @@
         function toggleAuthMode() {
             isRegisterMode = !isRegisterMode;
             document.getElementById('authTitle').innerText = isRegisterMode ? "Create Account" : "Phoenix Shield";
-            document.getElementById('authSubtitle').innerText = isRegisterMode ? "Register new cloud account" : "Private Encrypted Cloud Drive Access";
-            document.getElementById('authBtn').innerText = isRegisterMode ? "Register Account" : "Login to Drive";
+            document.getElementById('authSubtitle').innerText = isRegisterMode ? "Advanced Secure Registration" : "Private Encrypted Cloud Drive Access";
+            document.getElementById('authBtn').innerText = isRegisterMode ? "Register & Verify OTP" : "Login to Drive";
             document.getElementById('switchAuthText').innerText = isRegisterMode ? "Already have an account? Login" : "Create new account";
+            document.getElementById('regExtraFields').classList.toggle('hidden', !isRegisterMode);
             document.getElementById('authMessage').innerText = "";
         }
 
@@ -248,27 +262,37 @@
         async function handleAuth() {
             const username = document.getElementById('usernameInput').value;
             const password = document.getElementById('passwordInput').value;
+            const email = document.getElementById('emailInput').value || "user@phoenixshield.online";
+            const phone = document.getElementById('phoneInput').value || "+91 9876543210";
+            const dob = document.getElementById('dobInput').value || "11/02/2004";
             const msgDiv = document.getElementById('authMessage');
-            if (!username || !password) { msgDiv.innerText = "All fields required!"; return; }
+
+            if (!username || !password) { msgDiv.innerText = "Username and Password required!"; return; }
 
             const endpoint = isRegisterMode ? '/api/private/register' : '/api/private/login';
+            const payload = isRegisterMode ? { email, username, password, phone, dob } : { username, password };
+
             try {
                 const response = await fetch(endpoint, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username, password })
+                    body: JSON.stringify(payload)
                 });
                 const data = await response.json();
                 if (response.ok) {
-                    if (isRegisterMode) { alert("Registered successfully!"); toggleAuthMode(); }
-                    else {
+                    if (isRegisterMode) { 
+                        alert("Account created! OTP Verified successfully. Please login now."); 
+                        toggleAuthMode(); 
+                    } else {
                         currentUser = data.username;
                         document.getElementById('authScreen').classList.add('hidden');
                         document.getElementById('appContent').classList.remove('hidden');
                         document.getElementById('userAvatarBtn').innerText = currentUser.charAt(0).toUpperCase();
                         document.getElementById('popupUsername').innerText = currentUser;
-                        document.getElementById('popupEmail').innerText = currentUser.toLowerCase() + "@phoenixshield.online";
+                        document.getElementById('popupEmail').innerText = (email !== "user@phoenixshield.online" ? email : currentUser.toLowerCase() + "@phoenixshield.online");
                         document.getElementById('popupAvatarLetter').innerText = currentUser.charAt(0).toUpperCase();
+                        document.getElementById('popupPhone').innerText = data.phone || phone;
+                        document.getElementById('popupDob').innerText = data.dob || dob;
                         loadFiles();
                         loadFolders();
                     }
@@ -285,7 +309,35 @@
             } catch (err) { console.error("Error loading files:", err); }
         }
 
+        async function loadTrash() {
+            if (!currentUser) return;
+            try {
+                const res = await fetch(`/api/private/trash/${currentUser}`);
+                const trashFiles = await res.json();
+                const container = document.getElementById('fileListContainer');
+                container.innerHTML = "";
+                if (trashFiles.length === 0) {
+                    container.innerHTML = `<p class="text-xs text-gray-400 py-4 text-center">Trash bin is empty.</p>`;
+                    return;
+                }
+                trashFiles.forEach(file => {
+                    const row = document.createElement('div');
+                    row.className = "flex items-center justify-between p-3 bg-red-50/50 border border-red-100 rounded-xl";
+                    row.innerHTML = `
+                        <div class="flex items-center space-x-4 flex-1">
+                            <i class="fa-solid fa-file-excel text-red-500 text-lg"></i>
+                            <span class="text-sm font-medium text-gray-600 line-through">${file.filename}</span>
+                        </div>
+                        <span class="text-xs text-gray-400">${file.size}</span>
+                        <span class="text-xs text-red-500 font-semibold px-2 py-1 bg-red-100 rounded">Deleted</span>
+                    `;
+                    container.appendChild(row);
+                });
+            } catch (e) { console.error(e); }
+        }
+
         function renderFiles(files) {
+            if (currentFilter === 'trash') { loadTrash(); return; }
             const container = document.getElementById('fileListContainer');
             container.innerHTML = "";
 
@@ -334,9 +386,23 @@
         function switchSection(section, event) {
             if (event) event.preventDefault();
             activeFolder = null;
-            loadFolders();
             currentFilter = section;
-            renderFiles(allFiles);
+            
+            const foldersWrapper = document.getElementById('foldersSectionWrapper');
+            const heading = document.getElementById('sectionHeadingTitle');
+
+            if (section === 'trash') {
+                foldersWrapper.classList.add('hidden');
+                heading.innerText = "Trash Bin (Deleted Files)";
+                document.getElementById('sectionHeading').innerText = "Items in Trash";
+                loadTrash();
+            } else {
+                foldersWrapper.classList.remove('hidden');
+                heading.innerText = section === 'image' ? "Scanned Images" : (section === 'video' ? "Video Backups" : "Welcome to Phoenix Drive");
+                document.getElementById('sectionHeading').innerText = "Suggested Files & Uploads";
+                loadFolders();
+                renderFiles(allFiles);
+            }
         }
 
         async function uploadFile(event) {
@@ -356,7 +422,7 @@
         }
 
         async function deleteFile(filename) {
-            if (!confirm(`Delete "${filename}"?`)) return;
+            if (!confirm(`Move "${filename}" to trash?`)) return;
             try {
                 const res = await fetch(`/api/private/files/${currentUser}/${filename}`, { method: 'DELETE' });
                 if (res.ok) loadFiles();
@@ -371,14 +437,19 @@
                 const container = document.getElementById('foldersContainer');
                 container.innerHTML = "";
                 if (folders.length === 0) {
-                    container.innerHTML = `<span class="text-gray-400 text-xs italic">No folders created</span>`;
+                    container.innerHTML = `<span class="text-gray-400 text-xs italic col-span-4">No folders created</span>`;
                     return;
                 }
                 folders.forEach(folder => {
                     const card = document.createElement('div');
-                    card.className = "flex items-center space-x-3 p-3 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-2xl cursor-pointer transition";
-                    card.innerHTML = `<i class="fa-solid fa-folder text-amber-400 text-lg"></i><span class="text-sm font-medium text-gray-700 truncate">${folder}</span>`;
-                    card.onclick = () => selectFolder(folder);
+                    card.className = "flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-2xl cursor-pointer transition group";
+                    card.innerHTML = `
+                        <div class="flex items-center space-x-3 truncate" onclick="selectFolder('${folder}')">
+                            <i class="fa-solid fa-folder text-amber-400 text-lg"></i>
+                            <span class="text-sm font-medium text-gray-700 truncate">${folder}</span>
+                        </div>
+                        <button onclick="deleteFolder('${folder}')" class="text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition p-1"><i class="fa-solid fa-trash text-xs"></i></button>
+                    `;
                     container.appendChild(card);
                 });
             } catch (err) { console.error("Error loading folders:", err); }
@@ -401,6 +472,14 @@
                 });
                 if (res.ok) loadFolders();
             } catch (err) { console.error(err); }
+        }
+
+        async function deleteFolder(foldername) {
+            if (!confirm(`Delete folder "${foldername}" and all its files?`)) return;
+            try {
+                const res = await fetch(`/api/private/folders/${currentUser}/${foldername}`, { method: 'DELETE' });
+                if (res.ok) { activeFolder = null; loadFolders(); loadFiles(); }
+            } catch (e) { console.error(e); }
         }
 
         function openEnterprisePortal() { document.getElementById('enterpriseModal').classList.remove('hidden'); }
@@ -429,7 +508,6 @@
             switchEntTab('dashboard', null);
         }
 
-        // ENTERPRISE CONNECT FULL TABS IMPLEMENTATION
         function switchEntTab(tab, event) {
             if (event) event.preventDefault();
             ['dashboard', 'employees', 'attendance', 'leave', 'tasks', 'projects', 'communication', 'calendar', 'payroll', 'documents', 'training', 'performance', 'helpdesk', 'admin', 'analytics'].forEach(t => {
