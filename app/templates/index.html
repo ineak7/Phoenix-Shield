@@ -35,7 +35,6 @@
             </div>
 
             <div class="space-y-3">
-                <!-- Registration Specific Extra Fields -->
                 <div id="regExtraFields" class="hidden space-y-3">
                     <div>
                         <label class="text-xs font-semibold text-gray-600">Corporate Email ID</label>
@@ -122,8 +121,6 @@
 
     <!-- MAIN DASHBOARD -->
     <div id="appContent" class="hidden flex flex-col h-full overflow-hidden bg-white">
-        
-        <!-- TOP HEADER -->
         <header class="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-4 shrink-0">
             <div class="flex items-center space-x-3 w-64">
                 <div class="flex items-center space-x-2">
@@ -145,7 +142,6 @@
                 <button class="text-gray-600 hover:bg-gray-100 p-2.5 rounded-full"><i class="fa-solid fa-gear text-lg"></i></button>
                 <div onclick="toggleProfilePopup()" class="w-9 h-9 bg-blue-600 text-white rounded-full flex items-center justify-center font-semibold cursor-pointer shadow-sm hover:opacity-90" id="userAvatarBtn">N</div>
 
-                <!-- Profile Popup Menu -->
                 <div id="profilePopup" class="hidden absolute right-0 top-12 w-80 bg-white rounded-3xl shadow-2xl border border-gray-200 z-50 p-6 text-center">
                     <p class="text-xs text-gray-500 font-medium truncate" id="popupEmail">nitin@phoenixshield.online</p>
                     <div class="w-16 h-16 bg-blue-600 text-white rounded-full mx-auto flex items-center justify-center text-2xl font-bold my-3 shadow-md" id="popupAvatarLetter">N</div>
@@ -164,10 +160,7 @@
             </div>
         </header>
 
-        <!-- MAIN BODY CONTAINER -->
         <div class="flex flex-1 overflow-hidden">
-            
-            <!-- LEFT SIDEBAR -->
             <aside id="mainSidebar" class="w-64 bg-white p-3 flex flex-col justify-between shrink-0 select-none">
                 <div class="space-y-3">
                     <button onclick="document.getElementById('fileInput').click()" class="bg-white hover:shadow-lg border border-gray-200 text-gray-700 font-medium px-6 py-3.5 rounded-2xl flex items-center space-x-4 transition shadow-sm group">
@@ -203,7 +196,6 @@
                 </div>
             </aside>
 
-            <!-- ENTERPRISE SIDEBAR -->
             <aside id="entSidebar" class="hidden w-64 bg-slate-900 text-slate-200 border-r border-slate-800 p-3 flex flex-col justify-between shrink-0 overflow-y-auto">
                 <nav class="space-y-1 text-xs">
                     <div class="text-[10px] uppercase tracking-wider text-slate-500 px-3 py-1 font-bold">Enterprise Connect</div>
@@ -225,24 +217,19 @@
                 </nav>
             </aside>
 
-            <!-- MAIN CONTENT DISPLAY AREA -->
             <main class="flex-1 bg-white p-6 overflow-y-auto flex flex-col">
-                <!-- Private Drive Panel -->
                 <div id="driveContentPanel" class="space-y-6">
                     <h2 id="sectionHeadingTitle" class="text-xl font-normal text-gray-700">Welcome to Phoenix Drive</h2>
-                    
                     <div id="foldersSectionWrapper" class="space-y-2">
                         <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Folders</h3>
                         <div id="foldersContainer" class="grid grid-cols-4 gap-4"></div>
                     </div>
-
                     <div class="space-y-3 pt-4">
                         <h3 id="sectionHeading" class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Suggested Files & Uploads</h3>
                         <div id="fileListContainer" class="space-y-2"></div>
                     </div>
                 </div>
 
-                <!-- Enterprise Dashboard Panel -->
                 <div id="enterpriseDashboard" class="hidden space-y-6">
                     <div class="flex justify-between items-center border-b border-gray-100 pb-4">
                         <h1 id="deptTitle" class="text-xl font-bold text-slate-900">Department Dashboard</h1>
@@ -254,7 +241,6 @@
         </div>
     </div>
 
-    <!-- JAVASCRIPT LOGIC -->
     <script>
         let isRegisterMode = false;
         let currentUser = '';
@@ -619,7 +605,7 @@
         }
 
         async function renderAttendance(c){
-            const rows=await entFetch(`/api/enterprise/attendance/${encodeURIComponent(currentUser)}`); const today=rows.find(r=>r.work_date===new Date().toISOString().slice(0,10));
+            const rows=await entFetch(`/api/enterprise/attendance/${encodeURIComponent(currentUser)}`); 
             c.innerHTML=entCard('Attendance Management',`<div class="flex gap-2 mb-4"><button class="ent-btn ent-btn-green" onclick="attendanceAction('check-in')">Check In</button><button class="ent-btn ent-btn-gray" onclick="attendanceAction('check-out')">Check Out</button></div><table class="ent-table"><thead><tr><th>Date</th><th>Check In</th><th>Check Out</th><th>Status</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${r.work_date}</td><td>${r.check_in||'-'}</td><td>${r.check_out\vert{}\vert{}'-'}</td><td>${r.status}</td></tr>`).join('')||'<tr><td colspan="4">No attendance records yet.</td></tr>'}</tbody></table>`);
         }
         async function attendanceAction(action){try{await entFetch(`/api/enterprise/attendance/${encodeURIComponent(currentUser)}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action})});switchEntTab('attendance',null);}catch(e){alert(e.message)}}
