@@ -263,7 +263,7 @@ def login_user(creds: UserCredentials):
             "dob": user[2] or "11/02/2004",
             "is_verified": user[3]
         }
-    raise HTTPException(status_code=401, detail="Invalid credentials!")
+    raise HTTPException(status_code=401, detail="Invalid username or password! Please register first if you don't have an account.")
 
 # --- File Upload & Management Routes ---
 @app.post("/api/private/upload")
@@ -384,7 +384,6 @@ def login_enterprise(payload: dict):
     emp = cursor.fetchone()
     
     if not emp:
-        # Auto-create entry if first login with valid credentials format
         cursor.execute("INSERT OR IGNORE INTO employees (employee_id, name, department, role, email, password) VALUES (?, ?, ?, ?, ?, ?)",
                        (emp_id, emp_id, department, "Employee", f"{emp_id.lower()}@phoenixshield.online", password))
         conn.commit()
@@ -617,7 +616,6 @@ def get_payroll(employee_id: str):
     cursor.execute("SELECT month, basic, allowances, deductions, net, status FROM payroll WHERE employee_id = ?", (employee_id,))
     rows = cursor.fetchall()
     if not rows:
-        # Generate dummy payroll if none exists
         rows = [("September 2026", 75000, 15000, 5000, 85000, "Disbursed")]
     conn.close()
     return [{"month": r[0], "basic": r[1], "allowances": r[2], "deductions": r[3], "net": r[4], "status": r[5]} for r in rows]
