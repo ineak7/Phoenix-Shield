@@ -19,10 +19,11 @@ def init_db():
     conn = sqlite3.connect(DB_FILE)
     cursor = conn.cursor()
 
-    # Core tables
+    # Core tables - Added email column
     cursor.execute('''CREATE TABLE IF NOT EXISTS users (
                         username TEXT PRIMARY KEY, 
                         password TEXT,
+                        email TEXT,
                         phone TEXT,
                         dob TEXT,
                         is_verified INTEGER DEFAULT 0
@@ -240,12 +241,15 @@ def register_user(creds: UserCredentials):
     conn = sqlite3.connect(DB_FILE)
     cursor = conn.cursor()
     try:
-        cursor.execute("INSERT INTO users (username, password, phone, dob, is_verified) VALUES (?, ?, ?, ?, ?)",
-                       (creds.username, creds.password, creds.phone, creds.dob, 0))
+        cursor.execute("INSERT INTO users (username, password, email, phone, dob, is_verified) VALUES (?, ?, ?, ?, ?, ?)",
+                       (creds.username, creds.password, creds.email, creds.phone, creds.dob, 0))
         conn.commit()
     except sqlite3.IntegrityError:
         conn.close()
         raise HTTPException(status_code=400, detail="Username already exists!")
+    except Exception as e:
+        conn.close()
+        raise HTTPException(status_code=400, detail=str(e))
     conn.close()
     return {"message": "Account created successfully!"}
 
@@ -736,6 +740,8 @@ def mark_notification(id: int, employee_id: str):
 
 @app.get("/api/security/traffic-logs")
 def get_traffic_logs():
+    conn = sqlite3.connect(DB_FILE)
+    cursor = conn.popup if hasattr(sqlite3, 'popup') else None # Safe guard
     conn = sqlite3.connect(DB_FILE)
     cursor = conn.cursor()
     cursor.execute("SELECT ip_address, endpoint, method, status, threat_level, timestamp FROM traffic_logs ORDER BY id DESC LIMIT 30")
