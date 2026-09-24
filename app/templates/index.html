@@ -244,6 +244,8 @@
         let allFiles = [];
         let currentFilter = 'all';
         let activeFolder = null;
+        let enterpriseProfile = null;
+        const ENT_SESSION_KEY = 'phoenix_enterprise_session';
 
         function toggleAuthMode() {
             isRegisterMode = !isRegisterMode;
@@ -494,9 +496,20 @@
             } else { document.getElementById('enterpriseKeyMsg').innerText = "Invalid key!"; }
         }
 
-        function loginDepartment() {
+        async function loginDepartment() {
             currentDept = document.getElementById('deptSelect').value;
-            currentUser = document.getElementById('deptIdInput').value;
+            const employeeId = document.getElementById('deptIdInput').value.trim();
+            if (!employeeId) { alert('Department Employee ID is required.'); return; }
+            try {
+                const res = await fetch('/api/enterprise/session', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({employee_id:employeeId, department:currentDept})});
+                const data = await res.json();
+                if (!res.ok) { alert(data.detail || 'Enterprise login failed'); return; }
+                currentUser = data.employee_id; enterpriseProfile = data;
+                localStorage.setItem(ENT_SESSION_KEY, JSON.stringify({employee_id:currentUser, department:currentDept}));
+                openEnterpriseUI();
+            } catch(e) { alert('Unable to connect to Enterprise backend.'); console.error(e); }
+        }
+        function openEnterpriseUI() {
             closeEnterprisePortal();
             document.getElementById('authScreen').classList.add('hidden');
             document.getElementById('appContent').classList.remove('hidden');
@@ -505,50 +518,65 @@
             document.getElementById('driveContentPanel').classList.add('hidden');
             document.getElementById('enterpriseDashboard').classList.remove('hidden');
             document.getElementById('deptTitle').innerText = `${currentDept} - Enterprise Hub`;
+            document.getElementById('roleBadge').innerText = `Role: ${enterpriseProfile?.role || 'Employee'}`;
             switchEntTab('dashboard', null);
         }
-
-        function switchEntTab(tab, event) {
-            if (event) event.preventDefault();
-            ['dashboard', 'employees', 'attendance', 'leave', 'tasks', 'projects', 'communication', 'calendar', 'payroll', 'documents', 'training', 'performance', 'helpdesk', 'admin', 'analytics'].forEach(t => {
-                const el = document.getElementById(`ent-nav-${t}`);
-                if (el) el.className = "flex items-center space-x-3 px-3 py-2 rounded-xl text-slate-300 hover:bg-slate-800 transition";
-            });
-            document.getElementById(`ent-nav-${tab}`).className = "flex items-center space-x-3 px-3 py-2 rounded-xl bg-purple-600 text-white font-medium transition";
-
-            const container = document.getElementById('entTabContent');
-            if (tab === 'dashboard') {
-                container.innerHTML = `<h3 class="font-semibold text-slate-800 text-sm">Company Overview & Announcements</h3><div class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs space-y-2"><p>📢 <b>Notice:</b> Q3 Security Audit scheduled for Friday.</p><p>🚀 All nodes operating at 99.9% uptime.</p></div>`;
-            } else if (tab === 'employees') {
-                container.innerHTML = `<h3 class="font-semibold text-slate-800 text-sm">Employee Directory & Departments</h3><div class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs"><p><b>Nitin Mor</b> - Lead Security Engineer (Cybersecurity)</p><p><b>Bullaa Bhai</b> - Senior Operations Analyst (IT)</p></div>`;
-            } else if (tab === 'attendance') {
-                container.innerHTML = `<h3 class="font-semibold text-slate-800 text-sm">Attendance Management</h3><div class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs"><button onclick="alert('Checked In Successfully!')" class="bg-emerald-600 text-white px-4 py-2 rounded-lg">Check-In Now</button></div>`;
-            } else if (tab === 'leave') {
-                container.innerHTML = `<h3 class="font-semibold text-slate-800 text-sm">Leave Management</h3><div class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs space-y-2"><button onclick="alert('Leave Request Submitted!')" class="bg-blue-600 text-white px-3 py-1.5 rounded-lg">Apply for Leave</button></div>`;
-            } else if (tab === 'tasks') {
-                container.innerHTML = `<h3 class="font-semibold text-slate-800 text-sm">Kanban Tasks Board</h3><div class="grid grid-cols-3 gap-3 text-xs"><div class="bg-slate-100 p-3 rounded-xl"><b>To Do</b><p class="mt-2 text-slate-500">Deploy IDS patch</p></div><div class="bg-slate-100 p-3 rounded-xl"><b>In Progress</b><p class="mt-2 text-slate-500">Email verification setup</p></div><div class="bg-slate-100 p-3 rounded-xl"><b>Done</b><p class="mt-2 text-slate-500">Custom domain linking</p></div></div>`;
-            } else if (tab === 'projects') {
-                container.innerHTML = `<h3 class="font-semibold text-slate-800 text-sm">Active Projects</h3><div class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs"><p><b>Phoenix Shield Core:</b> 95% Completed</p></div>`;
-            } else if (tab === 'communication') {
-                container.innerHTML = `<h3 class="font-semibold text-slate-800 text-sm">Company Chat & Announcements</h3><div class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs"><p><b>HR Bot:</b> Welcome to the secure corporate gateway.</p></div>`;
-            } else if (tab === 'calendar') {
-                container.innerHTML = `<h3 class="font-semibold text-slate-800 text-sm">Integrated Meeting Scheduler</h3><div class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs"><p>📅 <b>Sprint Review Meeting</b> - Today at 4:00 PM</p></div>`;
-            } else if (tab === 'payroll') {
-                container.innerHTML = `<h3 class="font-semibold text-slate-800 text-sm">Payroll & Payslips</h3><div class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs"><p>💰 Monthly Salary Disbursed (Encrypted Ledger)</p></div>`;
-            } else if (tab === 'documents') {
-                container.innerHTML = `<h3 class="font-semibold text-slate-800 text-sm">Corporate Policies & Documents</h3><div class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs"><p>📄 Employee_Handbook_2026.pdf</p></div>`;
-            } else if (tab === 'training') {
-                container.innerHTML = `<h3 class="font-semibold text-slate-800 text-sm">AI HR Assistant & Training</h3><div class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs space-y-2"><input type="text" placeholder="Ask AI HR assistant..." class="w-full p-2 border rounded-lg"><button onclick="alert('AI HR is processing your query.')" class="bg-purple-600 text-white px-3 py-1.5 rounded-lg">Ask AI</button></div>`;
-            } else if (tab === 'performance') {
-                container.innerHTML = `<h3 class="font-semibold text-slate-800 text-sm">Performance KPIs & Reviews</h3><div class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs"><p>⭐ Rating: 4.9 / 5.0 (Exceptional)</p></div>`;
-            } else if (tab === 'helpdesk') {
-                container.innerHTML = `<h3 class="font-semibold text-slate-800 text-sm">Help Desk & IT Tickets</h3><div class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs space-y-2"><button onclick="alert('Ticket raised successfully!')" class="bg-red-600 text-white px-3 py-1.5 rounded-lg">Raise IT/HR Ticket</button></div>`;
-            } else if (tab === 'admin') {
-                container.innerHTML = `<h3 class="font-semibold text-slate-800 text-sm">Admin Panel (User Management & Roles)</h3><div class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs"><p>🔒 Full access privileges enabled for ${currentUser}</p></div>`;
-            } else if (tab === 'analytics') {
-                loadTrafficIDS();
-            }
+        async function restoreEnterpriseSession() {
+            const raw = localStorage.getItem(ENT_SESSION_KEY);
+            if (!raw) return false;
+            try {
+                const s=JSON.parse(raw);
+                const res=await fetch('/api/enterprise/session',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(s)});
+                if(!res.ok) throw new Error('session invalid');
+                enterpriseProfile=await res.json(); currentUser=s.employee_id; currentDept=s.department; openEnterpriseUI(); return true;
+            } catch(e) { localStorage.removeItem(ENT_SESSION_KEY); return false; }
         }
+
+        async function apiJSON(url, options={}) {
+            const res=await fetch(url,options); const data=await res.json().catch(()=>({}));
+            if(!res.ok) throw new Error(data.detail||'Request failed'); return data;
+        }
+        function entForm(title, fields, buttonText) {
+            const html=fields.map(x=>x.type==='select'?`<div><label class="text-xs font-semibold">${x.label}</label><select id="ent-${x.id}" class="w-full mt-1 border rounded-lg p-2 text-sm">${x.options.map(o=>`<option>${o}</option>`).join('')}</select></div>`:`<div><label class="text-xs font-semibold">${x.label}</label><input id="ent-${x.id}" type="${x.type||'text'}" placeholder="${x.placeholder||''}" class="w-full mt-1 border rounded-lg p-2 text-sm"></div>`).join('');
+            return `<div class="bg-white border rounded-2xl p-4 shadow-sm"><h3 class="font-bold mb-3">${title}</h3><div class="grid md:grid-cols-2 gap-3">${html}</div><button id="ent-submit" class="mt-3 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm">${buttonText}</button></div>`;
+        }
+        async function switchEntTab(tab,event){
+            if(event)event.preventDefault();
+            ['dashboard','employees','attendance','leave','tasks','projects','communication','calendar','payroll','documents','training','performance','helpdesk','admin','analytics'].forEach(t=>{const e=document.getElementById(`ent-nav-${t}`);if(e)e.className='flex items-center space-x-3 px-3 py-2 rounded-xl text-slate-300 hover:bg-slate-800 transition';});
+            const a=document.getElementById(`ent-nav-${tab}`);if(a)a.className='flex items-center space-x-3 px-3 py-2 rounded-xl bg-purple-600 text-white font-medium transition';
+            const c=document.getElementById('entTabContent');
+            try{
+                if(tab==='dashboard'){
+                    const [t,m,n]=await Promise.all([apiJSON(`/api/enterprise/tickets/${encodeURIComponent(currentUser)}`),apiJSON(`/api/enterprise/meetings/${encodeURIComponent(currentUser)}`),apiJSON(`/api/enterprise/notifications/${encodeURIComponent(currentUser)}`)]);
+                    c.innerHTML=`<h3 class="font-semibold">Enterprise Overview</h3><div class="grid md:grid-cols-4 gap-3"><div class="p-4 rounded-xl bg-purple-50"><b>${t.length}</b><p class="text-xs">My Tickets</p></div><div class="p-4 rounded-xl bg-blue-50"><b>${m.filter(x=>x.status==='Scheduled').length}</b><p class="text-xs">Scheduled Meetings</p></div><div class="p-4 rounded-xl bg-amber-50"><b>${n.filter(x=>!x.is_read).length}</b><p class="text-xs">Unread Notifications</p></div><div class="p-4 rounded-xl bg-emerald-50"><b>${enterpriseProfile?.department||currentDept}</b><p class="text-xs">Department</p></div></div><div class="bg-slate-50 p-4 rounded-xl text-xs mt-3"><b>Persistent Workspace</b><p class="mt-1 text-slate-500">Enterprise records are stored in SQLite and restored after refresh. Backend ownership checks protect user-owned modifications.</p></div>`;
+                } else if(tab==='employees'){
+                    const r=await apiJSON('/api/enterprise/employees');c.innerHTML=`<h3 class="font-semibold">Employee Directory</h3><div class="overflow-auto border rounded-xl"><table class="w-full text-xs"><thead class="bg-slate-100"><tr><th class="p-3 text-left">ID</th><th class="p-3 text-left">Name</th><th class="p-3 text-left">Department</th><th class="p-3 text-left">Role</th><th class="p-3 text-left">Status</th></tr></thead><tbody>${r.map(x=>`<tr class="border-t"><td class="p-3 font-mono">${x.employee_id}</td><td class="p-3">${x.name}</td><td class="p-3">${x.department}</td><td class="p-3">${x.role}</td><td class="p-3">${x.status}</td></tr>`).join('')}</tbody></table></div>`;
+                } else if(tab==='attendance'){
+                    const r=await apiJSON(`/api/enterprise/attendance/${encodeURIComponent(currentUser)}`);c.innerHTML=`<h3 class="font-semibold">Attendance</h3><div class="flex gap-2"><button id="checkIn" class="bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm">Check In</button><button id="checkOut" class="bg-slate-700 text-white px-4 py-2 rounded-lg text-sm">Check Out</button></div><div class="border rounded-xl overflow-auto mt-3"><table class="w-full text-xs"><thead class="bg-slate-100"><tr><th class="p-3">Date</th><th class="p-3">Check In</th><th class="p-3">Check Out</th><th class="p-3">Status</th></tr></thead><tbody>${r.map(x=>`<tr class="border-t"><td class="p-3">${x.date}</td><td class="p-3">${x.check_in||'-'}</td><td class="p-3">${x.check_out||'-'}</td><td class="p-3">${x.status}</td></tr>`).join('')}</tbody></table></div>`;document.getElementById('checkIn').onclick=async()=>{await apiJSON('/api/enterprise/attendance/check-in',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({employee_id:currentUser})});switchEntTab('attendance',null)};document.getElementById('checkOut').onclick=async()=>{try{await apiJSON('/api/enterprise/attendance/check-out',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({employee_id:currentUser})});switchEntTab('attendance',null)}catch(e){alert(e.message)}};
+                } else if(tab==='leave'){
+                    const r=await apiJSON(`/api/enterprise/leave/${encodeURIComponent(currentUser)}`);c.innerHTML=entForm('Apply for Leave',[{id:'type',label:'Leave Type',type:'select',options:['Casual Leave','Sick Leave','Earned Leave','Work From Home']},{id:'start',label:'Start Date',type:'date'},{id:'end',label:'End Date',type:'date'},{id:'reason',label:'Reason'}],'Submit Leave Request')+`<div class="border rounded-xl overflow-auto mt-3"><table class="w-full text-xs"><thead class="bg-slate-100"><tr><th class="p-3">Type</th><th class="p-3">Dates</th><th class="p-3">Reason</th><th class="p-3">Status</th></tr></thead><tbody>${r.map(x=>`<tr class="border-t"><td class="p-3">${x.type}</td><td class="p-3">${x.start_date} → ${x.end_date}</td><td class="p-3">${x.reason||'-'}</td><td class="p-3">${x.status}</td></tr>`).join('')}</tbody></table></div>`;document.getElementById('ent-submit').onclick=async()=>{await apiJSON('/api/enterprise/leave',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({employee_id:currentUser,leave_type:document.getElementById('ent-type').value,start_date:document.getElementById('ent-start').value,end_date:document.getElementById('ent-end').value,reason:document.getElementById('ent-reason').value})});switchEntTab('leave',null)};
+                } else if(tab==='tasks'){
+                    const r=await apiJSON(`/api/enterprise/tasks/${encodeURIComponent(currentUser)}`);c.innerHTML=entForm('Create Task',[{id:'title',label:'Title'},{id:'description',label:'Description'},{id:'assigned',label:'Assign To',placeholder:currentUser},{id:'priority',label:'Priority',type:'select',options:['Low','Medium','High','Critical']},{id:'due',label:'Due Date',type:'date'}],'Save Task')+`<div class="grid md:grid-cols-3 gap-3 mt-3">${['To Do','In Progress','Done'].map(s=>`<div class="bg-slate-100 rounded-xl p-3"><b>${s}</b>${r.filter(x=>x.status===s).map(x=>`<div class="bg-white rounded-lg p-3 mt-2 border"><b>${x.title}</b><p class="text-xs">${x.priority} · ${x.due_date||'No deadline'}</p>${x.status!=='Done'?`<button onclick="updateEnterpriseTask(${x.id},'${x.status==='To Do'?'In Progress':'Done'}')" class="mt-2 text-xs text-purple-600">Move</button>`:''}</div>`).join('')}</div>`).join('')}</div>`;document.getElementById('ent-submit').onclick=async()=>{await apiJSON('/api/enterprise/tasks',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({title:document.getElementById('ent-title').value,description:document.getElementById('ent-description').value,assigned_to:document.getElementById('ent-assigned').value.trim()||currentUser,created_by:currentUser,priority:document.getElementById('ent-priority').value,due_date:document.getElementById('ent-due').value})});switchEntTab('tasks',null)};
+                } else if(tab==='projects'){
+                    const r=await apiJSON(`/api/enterprise/projects/${encodeURIComponent(currentUser)}`);c.innerHTML=entForm('Create Project',[{id:'name',label:'Project Name'},{id:'description',label:'Description'},{id:'progress',label:'Initial Progress %',type:'number'}],'Save Project')+r.map(x=>`<div class="bg-white border rounded-xl p-4 mt-3"><div class="flex justify-between"><b>${x.name}</b><span>${x.progress}%</span></div><div class="h-2 bg-slate-100 rounded mt-2"><div class="h-2 bg-purple-600 rounded" style="width:${x.progress}%"></div></div><p class="text-xs mt-2">${x.description||''}</p></div>`).join('');document.getElementById('ent-submit').onclick=async()=>{await apiJSON('/api/enterprise/projects',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:document.getElementById('ent-name').value,description:document.getElementById('ent-description').value,owner_id:currentUser,progress:Number(document.getElementById('ent-progress').value||0)})});switchEntTab('projects',null)};
+                } else if(tab==='communication'){
+                    const r=await apiJSON(`/api/enterprise/messages/${encodeURIComponent(currentDept)}`);c.innerHTML=entForm('Department Communication',[{id:'message',label:'Message'}],'Post Message')+`<div class="space-y-2 mt-3">${r.map(x=>`<div class="bg-slate-50 border rounded-xl p-3 text-sm"><b>${x.sender_id}</b><p>${x.message}</p><span class="text-[10px] text-slate-400">${new Date(x.created_at*1000).toLocaleString()}</span></div>`).join('')}</div>`;document.getElementById('ent-submit').onclick=async()=>{await apiJSON('/api/enterprise/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sender_id:currentUser,department:currentDept,message:document.getElementById('ent-message').value})});switchEntTab('communication',null)};
+                } else if(tab==='calendar'){
+                    const r=await apiJSON(`/api/enterprise/meetings/${encodeURIComponent(currentUser)}`);c.innerHTML=entForm('Schedule Meeting',[{id:'title',label:'Meeting Title'},{id:'description',label:'Description'},{id:'date',label:'Date',type:'date'},{id:'time',label:'Time',type:'time'}],'Save Meeting')+`<div class="space-y-2 mt-3">${r.map(x=>`<div class="bg-white border rounded-xl p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3"><div><b>${x.title}</b><p class="text-xs">${x.date} at ${x.time} · ${x.status}</p><p class="text-xs">${x.description||''}</p></div><div class="flex gap-2">${x.status!=='Cancelled'?`<button onclick="rescheduleMeeting(${x.id})" class="text-xs bg-blue-50 text-blue-700 px-3 py-2 rounded-lg">Reschedule</button><button onclick="cancelMeeting(${x.id})" class="text-xs bg-red-50 text-red-700 px-3 py-2 rounded-lg">Cancel</button>`:''}</div></div>`).join('')}</div>`;document.getElementById('ent-submit').onclick=async()=>{await apiJSON('/api/enterprise/meetings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({title:document.getElementById('ent-title').value,description:document.getElementById('ent-description').value,organizer_id:currentUser,meeting_date:document.getElementById('ent-date').value,meeting_time:document.getElementById('ent-time').value})});switchEntTab('calendar',null)};
+                } else if(tab==='helpdesk'){
+                    const r=await apiJSON(`/api/enterprise/tickets/${encodeURIComponent(currentUser)}`);c.innerHTML=entForm('Raise IT / HR Ticket',[{id:'category',label:'Category',type:'select',options:['IT Support','HR','Security','Finance','Access Request','Other']},{id:'subject',label:'Subject'},{id:'description',label:'Description'},{id:'priority',label:'Priority',type:'select',options:['Low','Medium','High','Critical']}],'Raise Ticket')+`<h3 class="font-semibold mt-4">Ticket History</h3><div class="space-y-2 mt-2">${r.map(x=>`<div class="bg-white border rounded-xl p-4"><div class="flex justify-between"><b>#${x.id} · ${x.subject}</b><span class="text-xs px-2 py-1 rounded bg-slate-100">${x.status}</span></div><p class="text-xs mt-1">${x.category} · ${x.priority}</p><p class="text-sm mt-2">${x.description}</p>${x.status!=='Closed'?`<button onclick="closeEnterpriseTicket(${x.id})" class="mt-2 text-xs text-red-600">Close ticket</button>`:''}</div>`).join('')}</div>`;document.getElementById('ent-submit').onclick=async()=>{await apiJSON('/api/enterprise/tickets',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({employee_id:currentUser,category:document.getElementById('ent-category').value,subject:document.getElementById('ent-subject').value,description:document.getElementById('ent-description').value,priority:document.getElementById('ent-priority').value})});switchEntTab('helpdesk',null)};
+                } else if(tab==='training'){c.innerHTML='<h3 class="font-semibold">Training & AI HR</h3><div class="bg-white border rounded-xl p-4 text-sm">Training workspace is persistent-ready. Connect your preferred AI API for the assistant without changing the database layer.</div>';
+                } else if(tab==='payroll'){c.innerHTML='<h3 class="font-semibold">Payroll & Payslips</h3><div class="bg-white border rounded-xl p-4 text-sm">Payroll workspace is ready for persistent employee salary and payslip records.</div>';
+                } else if(tab==='documents'){c.innerHTML='<h3 class="font-semibold">Corporate Documents</h3><div class="bg-white border rounded-xl p-4 text-sm">Existing Phoenix Drive uploads remain persistent and can be used for corporate documents.</div>';
+                } else if(tab==='performance'){c.innerHTML='<h3 class="font-semibold">Performance & KPI</h3><div class="bg-white border rounded-xl p-4 text-sm">Performance workspace is ready to connect persistent KPI and review records.</div>';
+                } else if(tab==='admin'){c.innerHTML=`<h3 class="font-semibold">Admin Panel</h3><div class="bg-slate-50 p-4 rounded-xl text-sm">Employee: <b>${currentUser}</b><br>Department: <b>${currentDept}</b><br>Role: <b>${enterpriseProfile?.role||'Employee'}</b></div>`;
+                } else if(tab==='analytics'){loadTrafficIDS();}
+            }catch(e){c.innerHTML=`<div class="bg-red-50 text-red-700 p-4 rounded-xl text-sm">${e.message}</div>`;}
+        }
+        async function updateEnterpriseTask(id,status){try{await apiJSON(`/api/enterprise/tasks/${id}`,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({employee_id:currentUser,status})});switchEntTab('tasks',null)}catch(e){alert(e.message)}}
+        async function rescheduleMeeting(id){const date=prompt('New date (YYYY-MM-DD):');if(!date)return;const time=prompt('New time (HH:MM):');if(!time)return;try{await apiJSON(`/api/enterprise/meetings/${id}`,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({organizer_id:currentUser,meeting_date:date,meeting_time:time})});switchEntTab('calendar',null)}catch(e){alert(e.message)}}
+        async function cancelMeeting(id){if(!confirm('Cancel this meeting?'))return;try{await apiJSON(`/api/enterprise/meetings/${id}`,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({organizer_id:currentUser,status:'Cancelled'})});switchEntTab('calendar',null)}catch(e){alert(e.message)}}
+        async function closeEnterpriseTicket(id){if(!confirm('Close this ticket?'))return;try{await apiJSON(`/api/enterprise/tickets/${id}`,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({employee_id:currentUser,status:'Closed'})});switchEntTab('helpdesk',null)}catch(e){alert(e.message)}}
 
         async function loadTrafficIDS() {
             const container = document.getElementById('entTabContent');
@@ -592,8 +620,11 @@
         }
 
         function logout() {
+            localStorage.removeItem(ENT_SESSION_KEY);
             location.reload();
         }
+
+        restoreEnterpriseSession();
     </script>
 </body>
 </html>
