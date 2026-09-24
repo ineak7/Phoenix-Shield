@@ -30,11 +30,9 @@ def init_db():
     conn = db()
     c = conn.cursor()
     
-    # Base tables with safe column checks to prevent migration crashes on Render
     c.execute('''CREATE TABLE IF NOT EXISTS users (
         username TEXT PRIMARY KEY, password TEXT, phone TEXT, dob TEXT, is_verified INTEGER DEFAULT 0)''')
     
-    # Safe check and add columns if missing in existing database
     existing_cols = [row[1] for row in c.execute("PRAGMA table_info(users)").fetchall()]
     if "phone" not in existing_cols:
         c.execute("ALTER TABLE users ADD COLUMN phone TEXT")
@@ -120,11 +118,9 @@ def init_db():
         id INTEGER PRIMARY KEY AUTOINCREMENT, employee_id TEXT NOT NULL,
         filename TEXT NOT NULL, category TEXT DEFAULT 'General', created_at REAL NOT NULL)''')
 
-    # Existing demo user retained for compatibility.
     c.execute("INSERT OR IGNORE INTO users (username,password,phone,dob,is_verified) VALUES (?,?,?,?,1)",
               ("NitinMor", "Nitin@1234", "+919876543210", "11/02/2004"))
 
-    # Seed enterprise demo employees.
     demo = [
         ("IT-ADMIN-01", "IT Administrator", "Information Technology (IT)", "Department Admin", "it.admin@phoenixshield.online", "Admin@123"),
         ("SEC-ADMIN-01", "Security Administrator", "Cybersecurity", "Department Admin", "security.admin@phoenixshield.online", "Admin@123"),
@@ -169,7 +165,6 @@ async def monitor_traffic(request: Request, call_next):
                                   (client_ip,path,method,status,threat_level,time.time())); conn.commit(); conn.close()
     return response
 
-# ---------------- OLD PRIVATE DRIVE MODELS ----------------
 class UserCredentials(BaseModel):
     username: str
     password: str
@@ -250,7 +245,6 @@ def list_folders(username:str):
 def delete_folder(username:str,foldername:str):
     conn=db(); conn.execute("DELETE FROM folders WHERE username=? AND name=?",(username,foldername)); conn.execute("DELETE FROM files WHERE username=? AND folder_name=?",(username,foldername)); conn.commit(); conn.close(); return {"message":"Folder deleted successfully"}
 
-# ---------------- OLD ENTERPRISE QUERY / KEY ----------------
 @app.post("/api/enterprise/verify-key")
 def verify_enterprise_key(payload:dict):
     key=payload.get("key"); valid=["MNC-SECURE-KEY-2026-X99","ENTERPRISE-PRO-KEY"]
@@ -263,7 +257,6 @@ def raise_department_query(q:QueryCreate):
 def get_department_queries(dept:str):
     conn=db(); rows=conn.execute("SELECT id,from_dept,query_text,status FROM dept_queries WHERE to_dept=?",(dept,)).fetchall(); conn.close(); return [dict(r) for r in rows]
 
-# ---------------- ENTERPRISE AUTH / HELPERS ----------------
 class EnterpriseLogin(BaseModel):
     employee_id:str; password:str; department:str
 class EmployeeCreate(BaseModel):
@@ -339,7 +332,6 @@ def create_employee(payload:EmployeeCreate, actor_id:str):
     except sqlite3.IntegrityError: conn.close(); raise HTTPException(400,"Employee ID already exists")
     conn.close(); audit(actor_id,"CREATE","employee",payload.employee_id,payload.name); return {"message":"Employee created"}
 
-# ---------------- ATTENDANCE ----------------
 @app.post("/api/enterprise/attendance/{employee_id}")
 def attendance_action(employee_id:str,payload:AttendanceAction):
     if not get_emp(employee_id): raise HTTPException(404,"Employee not found")
@@ -357,7 +349,6 @@ def attendance_action(employee_id:str,payload:AttendanceAction):
 def attendance_history(employee_id:str):
     conn=db(); rows=conn.execute("SELECT * FROM attendance WHERE employee_id=? ORDER BY work_date DESC LIMIT 100",(employee_id,)).fetchall(); conn.close(); return [dict(r) for r in rows]
 
-# ---------------- LEAVE ----------------
 @app.post("/api/enterprise/leave/{employee_id}")
 def apply_leave(employee_id:str,payload:LeaveCreate):
     now=time.time(); conn=db(); cur=conn.execute("INSERT INTO leave_requests(employee_id,leave_type,start_date,end_date,reason,created_at,updated_at) VALUES(?,?,?,?,?,?,?)",(employee_id,payload.leave_type,payload.start_date,payload.end_date,payload.reason,now,now)); lid=cur.lastrowid; conn.commit(); conn.close(); audit(employee_id,"CREATE","leave",lid); return {"id":lid,"message":"Leave request submitted"}
@@ -373,7 +364,6 @@ def update_leave(leave_id:int,payload:LeaveUpdate,actor_id:str):
     if actor_id!=row["employee_id"] and not (actor["role"] in ("Department Admin","Super Admin") and actor["department"]==owner["department"]): raise HTTPException(403,"Not authorized")
     conn=db(); conn.execute("UPDATE leave_requests SET status=?,updated_at=? WHERE id=?",(payload.status,time.time(),leave_id)); conn.commit(); conn.close(); notify(row["employee_id"],"Leave updated",f"Your leave request #{leave_id} is now {payload.status}."); audit(actor_id,"UPDATE","leave",leave_id,payload.status); return {"message":"Leave updated"}
 
-# ---------------- TASKS ----------------
 @app.post("/api/enterprise/tasks")
 def create_task(payload:TaskCreate,actor_id:str):
     if not get_emp(actor_id) or not get_emp(payload.assigned_to): raise HTTPException(404,"Employee not found")
@@ -392,7 +382,6 @@ def update_task(task_id:int,payload:TaskUpdate,actor_id:str):
     if not fields: return {"message":"Nothing to update"}
     vals += [time.time(),task_id]; conn=db(); conn.execute("UPDATE tasks SET "+",".join(fields)+",updated_at=? WHERE id=?",vals); conn.commit(); conn.close(); audit(actor_id,"UPDATE","task",task_id); return {"message":"Task updated"}
 
-# ---------------- PROJECTS ----------------
 @app.post("/api/enterprise/projects")
 def create_project(payload:ProjectCreate,actor_id:str):
     now=time.time(); conn=db(); cur=conn.execute("INSERT INTO projects(owner_employee_id,name,description,progress,created_at,updated_at) VALUES(?,?,?,?,?,?)",(actor_id,payload.name,payload.description,max(0,min(100,payload.progress)),now,now)); pid=cur.lastrowid; conn.commit(); conn.close(); audit(actor_id,"CREATE","project",pid,payload.name); return {"id":pid,"message":"Project created"}
@@ -411,7 +400,6 @@ def update_project(project_id:int,payload:ProjectUpdate,actor_id:str):
         vals += [time.time(),project_id]; conn=db(); conn.execute("UPDATE projects SET "+",".join(fields)+",updated_at=? WHERE id=?",vals); conn.commit(); conn.close()
     audit(actor_id,"UPDATE","project",project_id); return {"message":"Project updated"}
 
-# ---------------- COMMUNICATION ----------------
 @app.post("/api/enterprise/messages/{employee_id}")
 def send_message(employee_id:str,payload:MessageCreate):
     e=get_emp(employee_id); conn=db(); cur=conn.execute("INSERT INTO messages(sender_employee_id,department,message,created_at) VALUES(?,?,?,?)",(employee_id,e["department"],payload.message,time.time())); mid=cur.lastrowid; conn.commit(); conn.close(); audit(employee_id,"CREATE","message",mid); return {"id":mid,"message":"Message posted"}
@@ -419,7 +407,6 @@ def send_message(employee_id:str,payload:MessageCreate):
 def messages(employee_id:str):
     e=get_emp(employee_id); conn=db(); rows=conn.execute("SELECT * FROM messages WHERE department=? ORDER BY id DESC LIMIT 100",(e["department"],)).fetchall(); conn.close(); return [dict(r) for r in rows]
 
-# ---------------- MEETINGS ----------------
 @app.post("/api/enterprise/meetings/{employee_id}")
 def create_meeting(employee_id:str,payload:MeetingCreate):
     now=time.time(); conn=db(); cur=conn.execute("INSERT INTO meetings(organizer_employee_id,title,meeting_date,meeting_time,description,created_at,updated_at) VALUES(?,?,?,?,?,?,?)",(employee_id,payload.title,payload.meeting_date,payload.meeting_time,payload.description,now,now)); mid=cur.lastrowid
@@ -445,7 +432,6 @@ def update_meeting(meeting_id:int,payload:MeetingUpdate,actor_id:str):
         vals += [time.time(),meeting_id]; conn=db(); conn.execute("UPDATE meetings SET "+",".join(fields)+",updated_at=? WHERE id=?",vals); conn.commit(); conn.close()
     audit(actor_id,"UPDATE","meeting",meeting_id,payload.status or "rescheduled"); return {"message":"Meeting updated"}
 
-# ---------------- TICKETS ----------------
 @app.post("/api/enterprise/tickets/{employee_id}")
 def create_ticket(employee_id:str,payload:TicketCreate):
     e=get_emp(employee_id); ticket_no=f"PS-{time.strftime('%Y%m%d')}-{int(time.time()*1000)%100000:05d}"; now=time.time(); conn=db(); cur=conn.execute("INSERT INTO tickets(ticket_no,employee_id,department,category,subject,description,priority,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?)",(ticket_no,employee_id,e["department"],payload.category,payload.subject,payload.description,payload.priority,now,now)); tid=cur.lastrowid; conn.commit(); conn.close(); audit(employee_id,"CREATE","ticket",tid,ticket_no); notify(employee_id,"Ticket created",f"{ticket_no}: {payload.subject}"); return {"id":tid,"ticket_no":ticket_no,"message":"Ticket raised successfully"}
@@ -467,7 +453,6 @@ def update_ticket(ticket_id:int,payload:TicketUpdate,actor_id:str):
         vals += [time.time(),ticket_id]; conn=db(); conn.execute("UPDATE tickets SET "+",".join(fields)+",updated_at=? WHERE id=?",vals); conn.commit(); conn.close()
     audit(actor_id,"UPDATE","ticket",ticket_id,payload.status or "modified"); notify(row["employee_id"],"Ticket updated",f"Ticket {row['ticket_no']} was updated."); return {"message":"Ticket updated"}
 
-# ---------------- NOTIFICATIONS / AUDIT ----------------
 @app.get("/api/enterprise/notifications/{employee_id}")
 def get_notifications(employee_id:str):
     conn=db(); rows=conn.execute("SELECT * FROM notifications WHERE employee_id=? ORDER BY id DESC LIMIT 100",(employee_id,)).fetchall(); conn.close(); return [dict(r) for r in rows]
@@ -481,7 +466,6 @@ def get_audit(employee_id:str):
     else: rows=conn.execute("SELECT * FROM audit_logs WHERE employee_id=? ORDER BY id DESC LIMIT 100",(employee_id,)).fetchall()
     conn.close(); return [dict(r) for r in rows]
 
-# ---------------- DASHBOARD / PAYROLL / TRAINING / KPI / DOCUMENTS ----------------
 @app.get("/api/enterprise/dashboard/{employee_id}")
 def dashboard(employee_id:str):
     e=get_emp(employee_id)
@@ -514,7 +498,6 @@ def create_kpi(employee_id:str,payload:KPIUpdate):
 def documents(employee_id:str):
     conn=db(); rows=conn.execute("SELECT * FROM corporate_documents WHERE employee_id=? ORDER BY id DESC",(employee_id,)).fetchall(); conn.close(); return [dict(r) for r in rows]
 
-# ---------------- SECURITY LOGS (OLD) ----------------
 @app.get("/api/security/traffic-logs")
 def get_traffic_logs():
     conn=db(); rows=conn.execute("SELECT ip_address,endpoint,method,status,threat_level,timestamp FROM traffic_logs ORDER BY id DESC LIMIT 30").fetchall(); conn.close(); return [{"ip":r["ip_address"],"endpoint":r["endpoint"],"method":r["method"],"status":r["status"],"threat":r["threat_level"],"time":r["timestamp"]} for r in rows]
