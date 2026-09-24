@@ -1,683 +1,1194 @@
+Today 10:15 AM
+Pasted text(20260924-044225).txt
+Document
+Pasted text (2).txt
+Document
+@
+OpenAI Platform
+ so i made cloud operating system okii so this is the the backend code and this the frontend code okii  dont change this code and function of this code but i want add some new things in this also gereate the code old code (old function)+ new code (new added fuction) = best version of code so tell what features my website have till now okii i want every features that is present 
+
+
+Yes bruhh. I’ve gone through both your backend (FastAPI/Python) and frontend (HTML/CSS/JS) without changing anything yet.
+
+Your current project is Phoenix Shield — Secure Drive & Enterprise Hub. The code already has quite a lot of functionality.
+
+What your website currently has
+
+1. Private Cloud Drive
+
+Phoenix Drive dashboard
+User login
+User registration
+Username/password authentication
+Phone number + DOB fields during registration
+Account verification status
+User profile popup
+Sign-out/logout
+User avatar based on username
+Corporate-style email display
+
+The backend has dedicated register/login APIs and stores users in SQLite.
+
+2. Cloud File Management
+
+File upload
+File type detection
+Image detection
+Video detection
+Document detection
+File size calculation
+File listing
+File preview/view
+File download
+File deletion
+Deleted files moved to Trash
+Trash-bin listing
+Folder creation
+Folder listing
+Folder selection
+Folder-based file filtering
+Folder deletion
+Files belonging to a folder are deleted when that folder is deleted
+
+Your upload route records filename, owner, folder, type and size, while separate APIs handle listing and deletion.
+
+3. Drive Navigation
+Your frontend currently provides:
+
+Home
+My Drive
+Images
+Videos
+New Folder
+Trash Bin
+New/upload button
+File search
+
+The sidebar and storage UI are already implemented.
+
+4. Search
+
+Search box in the top header
+Searches filenames dynamically
+Works with the current file collection
+Search can be combined with the existing file filtering logic
+
+5. Enterprise Gateway
+You already have a separate enterprise environment:
+
+Enterprise Corporate Gateway
+Corporate license-key verification
+Department selection
+Department ID access
+Separate enterprise sidebar
+Enterprise Dashboard
+
+The backend currently validates enterprise license keys through /api/enterprise/verify-key.
+
+6. Enterprise Connect — Departments
+Your UI already includes:
+
+Cybersecurity
+Human Resources
+Finance & Accounts
+Sales
+Information Technology
+
+7. Enterprise Modules
+You have already designed 15 enterprise sections:
+
+Dashboard
+Employees
+Attendance
+Leave Management
+Tasks & Kanban
+Projects
+Communication
+Calendar & Meet
+Payroll
+Documents
+Training & AI HR
+Performance / KPI
+Help Desk
+Admin Panel
+Analytics & IDS
+
+8. Enterprise Dashboard Functions Already Present
+The current frontend contains working UI interactions for:
+
+Dashboard
+
+Company announcements
+Security-audit notice
+Infrastructure uptime information
+
+Employees
+
+Employee directory
+Department information
+
+Attendance
+
+Check-in button
+
+Leave
+
+Leave request button
+
+Tasks
+
+To Do
+In Progress
+Done
+Kanban-style task board
+
+Projects
+
+Active project tracking
+Project completion percentage
+
+Communication
+
+Company chat/announcement area
+HR bot-style interface
+
+Calendar & Meet
+
+Meeting/sprint-review information
+
+Payroll
+
+Salary/payslip section
+Encrypted-ledger concept
+
+Documents
+
+Corporate policy/document section
+
+Training & AI HR
+
+AI HR assistant input
+Ask AI interface
+
+Performance
+
+KPI/performance rating display
+
+Help Desk
+
+IT/HR ticket creation UI
+
+Admin
+
+User-management/role section
+Privilege display
+
+Analytics & IDS
+
+Real-time traffic/IDS dashboard
+IP address
+Endpoint
+HTTP method
+Threat classification
+Hacker detection highlighting
+
+The enterprise UI routing for all these modules is already present in your JS.
+
+9. Cybersecurity / IDS
+This is actually one of the strongest existing parts of your architecture.
+
+Backend currently has:
+
+HTTP middleware traffic monitoring
+Client IP capture
+Endpoint capture
+HTTP method capture
+Response-status logging
+Timestamp logging
+Suspicious keyword detection
+Payload anomaly detection
+Threat-level classification
+Traffic log database
+IDS dashboard
+
+The middleware checks suspicious patterns such as select, union, <script>, drop, and SQL-injection-like strings and records traffic into traffic_logs.
+
+And the frontend displays those logs in an IDS table with visual highlighting for detected threats.
+
+10. Backend Database
+SQLite is already being used with tables for:
+
+Users
+Folders
+Department queries
+Traffic logs
+Files
+Trash files
+
+11. Enterprise Department Queries
+You also have a backend workflow for inter-department communication:
+
+Department A → Department B
+Query/message text
+Pending status
+Query storage
+Receiving department can retrieve its queries
+
+One important distinction
+
+A number of the enterprise features are currently UI/demo functionality rather than complete backend systems.
+
+For example, your Attendance button currently displays a successful check-in alert, your Leave button displays a submission alert, and your Help Desk button displays a ticket-created alert. They are not yet connected to database-backed attendance/leave/ticket APIs.
+
+Similarly, the AI HR section currently has an interface, but it does not yet call an actual AI backend.
+
+So your project currently has two layers:
+
+Real backend functionality
+→ Authentication, SQLite storage, uploads, file metadata, folders, trash, downloads, traffic logging, anomaly detection, enterprise-key verification, department queries.
+
+Frontend/demo enterprise functionality
+→ HR, payroll, attendance, leave, projects, communication, calendar, AI HR, KPI, helpdesk, admin, etc.
+
+That distinction will be important when we build the “old functionality + new functionality = best version” without accidentally breaking anything.
+
+Also, I noticed your current backend contains a hard-coded demo user and hard-coded credentials/license keys, so those should eventually be moved into secure configuration before this becomes a real production cloud OS.
+
+Next step: we can turn Phoenix Shield from this current prototype into a much more complete Cloud Operating System + Enterprise Connect + Security platform, while preserving every existing function and adding the new modules on top.
+
+ WHAT THE DEP ID BRUHH 
+
+😂😂 Bruhh that SEC-ADMIN-01 is not a real ID from your system. That's just the placeholder/example that was already in the frontend.
+
+Your original frontend literally has:
+
+placeholder="Dept ID (e.g. SEC-ADMIN-01)"
+
+and the old loginDepartment() doesn't actually authenticate the ID against the backend—it simply takes whatever you type and opens the dashboard.
+
+So right now
+
+You can type something like:
+
+SEC-ADMIN-01
+
+and it opens because the current code doesn't validate it.
+
+But that's not what we want for the upgraded version.
+
+What I recommend we change
+
+Make actual enterprise employees:
+
+Employee ID: EMP-1001
+Department: Information Technology
+Role: Employee
+Password: ********
+
+and administrators:
+
+Employee ID: IT-ADMIN-01
+Department: Information Technology
+Role: Department Admin
+Password: ********
+
+Then the backend verifies:
+
+Department
+   ↓
+Employee ID
+   ↓
+Password
+   ↓
+Role
+   ↓
+Enterprise Dashboard
+
+And after login, the employee's tickets, meetings, tasks, attendance, leave, messages, etc. are loaded from the database based on their employee ID.
+
+So don't use SEC-ADMIN-01 as some magical password/ID. It's only the old example placeholder.
+
+Also, I caught an important issue: the phoenix_shield_backend_upgraded.py file I previously gave you doesn't actually contain the full persistent Enterprise backend we discussed—it is essentially still the old backend. So don't deploy that version expecting persistent tickets/meetings/etc. We need to properly merge those APIs into your original backend rather than pretending they're already there.
+
+If you want, I'll give you the proper complete backend + complete HTML together, with real Enterprise employee login + persistent database + all old Phoenix Drive functions preserved.
+
+YES SURE BUT OLD AND PRIVIOUSLY FUNTION SHOULD REMAIN SAME OKI GERNATE THE NEW COD E
+
+YES BRUHH 🔥 I generated the proper merged v5 code with the rule:
+
+OLD FUNCTIONS stay + NEW Enterprise functionality added.
+
+I also checked the frontend JavaScript syntax successfully.
+
+Files
+
+Frontend — complete HTML
+
+Download phoenix_shield_frontend_final.html
+
+Backend — complete FastAPI + SQLite
+
+Download phoenix_shield_backend_final.py
+
+Enterprise login is now REAL
+
+The old fake behavior where you could type anything into the department ID is removed.
+
+Demo Enterprise accounts:
+
+Department	Employee ID	Password
+Information Technology	IT-ADMIN-01	Admin@123
+Cybersecurity	SEC-ADMIN-01	Admin@123
+HR	HR-ADMIN-01	Admin@123
+Finance	FIN-ADMIN-01	Admin@123
+Sales	SALES-ADMIN-01	Admin@123
+
+So for your screenshot:
+
+Information Technology (IT)
+IT-ADMIN-01
+Admin@123
+
+And now Enterprise data persists
+
+For example:
+
+Help Desk
+
+Raise ticket
+Ticket number
+Priority
+Status
+Ticket history
+Resolve ticket
+Database persistence
+
+Calendar
+
+Create meeting
+Attendees
+Date/time
+Reschedule
+Cancel
+Cancelled meetings remain in history
+Organizer-only modification
+
+Tasks
+
+Create
+Assign
+Priority
+Deadline
+Kanban status
+Persistent updates
+
+Attendance
+
+Check-in
+Check-out
+History
+Persistent records
+
+Leave
+
+Apply
+History
+Status
+Admin/employee authorization
+
+Notifications + Audit
+
+Enterprise actions generate records
+Notifications persist
+Audit history persists
+
+Refresh
+
+Create data
+   ↓
+SQLite database
+   ↓
+Refresh browser
+   ↓
+Login/session restored
+   ↓
+DATA STILL THERE ✅
+
+And your original Private Drive routes/functions are retained in the new backend, including upload, download, preview, folders, trash, login/register, department queries and traffic/IDS logging. The original Drive backend contained those routes already.
+
+Important: replace your deployed index.html with the new HTML and your backend file with the new Python backend. Don't mix the old frontend with the new Enterprise APIs.
+
+phoenix_shield_frontend_final.html
+HTML
+phoenix_shield_backend_final.py
+Code
+STIL NOT SHOW I AM RUNNIG THIS WEBSITE THROUGH RENDER.COM THAT I HAVE LINKED IT WITH GITHUB SO I AM DIRECTLY CHANGE THE CODE IN FIT HUB SHOUKD I NEED TO CHANGE SOMETHING ELESE TOO 
+
+Yes — because you're deploying through GitHub → Render, changing the code in GitHub is necessary, but for the persistent Enterprise system there is one more important thing.
+
+Your screenshot's Not Found is a separate issue from persistence.
+
+1. For the new code
+
+Your flow is:
+
+GitHub
+   ↓
+Render watches your branch
+   ↓
+Render builds
+   ↓
+FastAPI starts
+   ↓
+phoenix-shield-1.onrender.com
+
+Render automatically deploys new commits from the linked Git branch when auto-deploy is enabled.
+
+So after replacing the files:
+
+GitHub repo
+├── app/
+│   ├── templates/
+│   │   └── index.html       ← replace this
+│   └── ...
+├── main.py / your backend   ← replace with upgraded backend
+├── requirements.txt
+└── ...
+
+then:
+
+git add .
+git commit -m "Upgrade Phoenix Shield Enterprise"
+git push
+
+Render should deploy the new commit.
+
+2. BUT — your persistence requirement needs attention
+
+This is very important.
+
+Your current application uses SQLite:
+
+app/users.db
+
+and uploaded files are stored locally:
+
+app/uploads
+
+Your original backend does exactly this.
+
+Render's normal filesystem is ephemeral. Files written by your application can disappear after a redeploy, restart, or spin-down. That includes local SQLite databases and uploaded files.
+
+So if you say:
+
+"Ticket save karo → refresh → still there"
+
+during the same running instance, SQLite can handle that.
+
+But if you say:
+
+"Ticket save karo → Render redeploy/restarts → still there"
+
+then your current SQLite setup isn't enough.
+
+You have two proper choices
+
+Option A — Render Persistent Disk
+
+Keep SQLite.
+
+Render
+ └── Persistent Disk
+       └── /var/data/
+             ├── users.db
+             └── uploads/
+
+Then configure your Python code to use something like:
+
+DB_FILE = "/var/data/users.db"
+UPLOAD_DIR = "/var/data/uploads"
+
+Render says persistent disks preserve filesystem changes across deploys/restarts, but they're available to paid services and have some limitations.
+
+Option B — PostgreSQL
+
+For a real multi-user enterprise application, this is the better long-term architecture:
+
+Phoenix Shield
+      ↓
+FastAPI
+      ↓
+PostgreSQL
+      ↓
+Employees
+Tickets
+Meetings
+Attendance
+Leave
+Tasks
+Projects
+Payroll
+Documents
+Audit Logs
+
+Render itself recommends a managed database such as Postgres for persistent relational data rather than relying on local files.
+
+3. And your screenshot's Not Found
+
+That's another problem.
+
+Your browser is showing:
+
+phoenix-shield-1.onrender.com/#
+
+and the alert says:
+
+Not Found
+
+The # itself isn't the problem.
+
+Your JavaScript is probably calling an API endpoint that doesn't exist on the currently deployed backend, or the deployment hasn't actually picked up the new backend.
+
+Check Render logs
+
+Go to:
+
+Render → phoenix-shield-1 → Logs
+
+Look for something like:
+
+Application startup complete
+
+and then check whether the new deployment actually occurred.
+
+Also open:
+
+https://phoenix-shield-1.onrender.com/docs
+
+Your FastAPI app should expose Swagger there if your backend is running correctly.
+
+If /docs works, then the backend is alive and we can check the API routes.
+
+What I recommend for YOUR project
+
+Since you're building this as a Cloud OS + Enterprise Connect, I'd do:
+
+                 PHOENIX SHIELD
+                       │
+             ┌─────────┴─────────┐
+             │                   │
+       Private Drive       Enterprise Connect
+             │                   │
+       File Storage        FastAPI APIs
+             │                   │
+             └─────────┬─────────┘
+                       │
+                  PostgreSQL
+                       │
+       ┌───────────────┼────────────────┐
+       │               │                │
+   Employees        Tickets         Meetings
+   Attendance       Leave            Tasks
+   Projects         Payroll          Documents
+   KPI              Training         Audit Logs
+
+That gives you the persistence you're asking for instead of just making the browser remember things.
+
+And yes: we keep your old Private Drive functionality. We're upgrading the backend architecture underneath it, not throwing your existing features away.
+
+If you show me your GitHub repository file structure (the files/folders in the repo), I can tell you exactly which files to replace, which files to keep, and what Render settings you need to change—without guessing.
+
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Phoenix Shield - Secure Drive & Enterprise Hub</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-<style>
-    .ent-card{background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:18px;box-shadow:0 4px 14px rgba(15,23,42,.04)}
-    .ent-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
-    .ent-input{width:100%;border:1px solid #cbd5e1;border-radius:10px;padding:9px 11px;font-size:12px;outline:none}
-    .ent-input:focus{box-shadow:0 0 0 2px rgba(124,58,237,.15);border-color:#8b5cf6}
-    .ent-btn{border-radius:10px;padding:9px 12px;font-size:12px;font-weight:600;transition:.15s}
-    .ent-btn-primary{background:#7c3aed;color:#fff}.ent-btn-primary:hover{background:#6d28d9}
-    .ent-btn-green{background:#059669;color:#fff}.ent-btn-green:hover{background:#047857}
-    .ent-btn-red{background:#fee2e2;color:#b91c1c}.ent-btn-red:hover{background:#fecaca}
-    .ent-btn-gray{background:#f1f5f9;color:#334155}.ent-btn-gray:hover{background:#e2e8f0}
-    .ent-muted{font-size:11px;color:#64748b}.ent-status{font-size:10px;padding:3px 7px;border-radius:999px;font-weight:700;display:inline-block}
-    .ent-table{width:100%;border-collapse:collapse;font-size:11px}.ent-table th,.ent-table td{padding:9px;border-bottom:1px solid #e2e8f0;text-align:left}.ent-table th{background:#f8fafc;color:#475569;text-transform:uppercase;font-size:9px;letter-spacing:.04em}
-</style>
-</head>
-<body class="bg-white text-gray-800 font-sans h-screen flex flex-col overflow-hidden">
+<html lang="en"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>Phoenix Shield - Secure Drive & Enterprise Hub</title> <script src="https://cdn.tailwindcss.com"></script> <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"> </head> <body class="bg-white text-gray-800 font-sans h-screen flex flex-col overflow-hidden">
 
-    <!-- PRIVATE AUTH & ADVANCED REGISTRATION SCREEN -->
-    <div id="authScreen" class="fixed inset-0 bg-slate-900 flex items-center justify-center z-50">
-        <div class="bg-white p-10 rounded-3xl shadow-2xl w-[440px] border border-gray-100 max-h-[90vh] overflow-y-auto">
-            <div class="text-center mb-6">
-                <div class="bg-blue-600 text-white w-14 h-14 rounded-2xl mx-auto flex items-center justify-center text-2xl font-bold mb-3 shadow-lg shadow-blue-500/30">
+<!-- PRIVATE AUTH & ADVANCED REGISTRATION SCREEN -->
+<div id="authScreen" class="fixed inset-0 bg-slate-900 flex items-center justify-center z-50">
+    <div class="bg-white p-10 rounded-3xl shadow-2xl w-[440px] border border-gray-100 max-h-[90vh] overflow-y-auto">
+        <div class="text-center mb-6">
+            <div class="bg-blue-600 text-white w-14 h-14 rounded-2xl mx-auto flex items-center justify-center text-2xl font-bold mb-3 shadow-lg shadow-blue-500/30">
+                <i class="fa-solid fa-shield-halved"></i>
+            </div>
+            <h2 id="authTitle" class="text-2xl font-bold text-gray-900">Phoenix Shield</h2>
+            <p id="authSubtitle" class="text-xs text-gray-400 mt-1">Private Encrypted Cloud Drive Access</p>
+        </div>
+
+        <div class="space-y-3">
+            <!-- Registration Specific Extra Fields -->
+            <div id="regExtraFields" class="hidden space-y-3">
+                <div>
+                    <label class="text-xs font-semibold text-gray-600">Corporate Email ID</label>
+                    <input type="email" id="emailInput" placeholder="name@phoenixshield.online" class="w-full mt-1 bg-gray-50 border border-gray-300 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="text-xs font-semibold text-gray-600">Phone Number</label>
+                        <input type="text" id="phoneInput" placeholder="+91 98765..." class="w-full mt-1 bg-gray-50 border border-gray-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold text-gray-600">Date of Birth</label>
+                        <input type="text" id="dobInput" placeholder="DD/MM/YYYY" class="w-full mt-1 bg-gray-50 border border-gray-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <label class="text-xs font-semibold text-gray-600">Username</label>
+                <input type="text" id="usernameInput" placeholder="Enter username" class="w-full mt-1 bg-gray-50 border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div>
+                <label class="text-xs font-semibold text-gray-600">Password</label>
+                <input type="password" id="passwordInput" placeholder="Enter secure password" class="w-full mt-1 bg-gray-50 border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div id="authMessage" class="text-xs text-red-500 text-center font-medium"></div>
+
+            <button id="authBtn" onclick="handleAuth()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl transition text-sm shadow-md shadow-blue-600/20">Login to Drive</button>
+            
+            <div class="flex items-center justify-between pt-3 border-t border-gray-100 mt-4">
+                <button onclick="toggleAuthMode()" id="switchAuthText" class="text-xs text-blue-600 hover:underline font-medium">Create new account</button>
+                <button onclick="openEnterprisePortal()" class="text-xs text-purple-600 hover:underline font-semibold"><i class="fa-solid fa-building-shield mr-1"></i>Enterprise Gateway</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ENTERPRISE LICENSE & DEPARTMENT LOGIN MODAL -->
+<div id="enterpriseModal" class="hidden fixed inset-0 bg-slate-950 bg-opacity-85 flex items-center justify-center z-50">
+    <div class="bg-slate-900 text-slate-100 p-8 rounded-3xl shadow-2xl w-[500px] border border-slate-800">
+        <div class="flex justify-between items-center mb-6">
+            <div class="flex items-center space-x-3">
+                <div class="bg-purple-600 text-white p-2.5 rounded-xl"><i class="fa-solid fa-network-wired"></i></div>
+                <div>
+                    <h3 class="text-lg font-bold">Enterprise Corporate Gateway</h3>
+                    <p class="text-xs text-slate-400">Multi-Department Secure Access Hub</p>
+                </div>
+            </div>
+            <button onclick="closeEnterprisePortal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+        </div>
+
+        <div id="entKeyStep" class="space-y-4">
+            <div>
+                <label class="text-xs font-semibold text-slate-400">Corporate License Key</label>
+                <input type="text" id="enterpriseKeyInput" placeholder="MNC-SECURE-KEY-2026-X99" class="w-full mt-1 bg-slate-800 border border-slate-700 text-blue-400 font-mono text-xs rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500">
+            </div>
+            <div id="enterpriseKeyMsg" class="text-xs text-red-400 font-mono"></div>
+            <button onclick="submitEnterpriseKey()" class="w-full bg-purple-600 hover:bg-purple-500 text-white font-semibold py-3 rounded-xl transition text-sm">Verify License Key</button>
+        </div>
+
+        <div id="entDeptStep" class="hidden space-y-4">
+            <div>
+                <label class="text-xs font-semibold text-slate-400">Select Corporate Department</label>
+                <select id="deptSelect" class="w-full mt-1 bg-slate-800 border border-slate-700 text-slate-200 text-sm rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                    <option value="Cybersecurity">Cybersecurity (IDS Monitored)</option>
+                    <option value="Human Resources (HR)">Human Resources (HR)</option>
+                    <option value="Finance & Accounts">Finance & Accounts</option>
+                    <option value="Sales">Sales</option>
+                    <option value="Information Technology (IT)">Information Technology (IT)</option>
+                </select>
+            </div>
+            <div>
+                <label class="text-xs font-semibold text-slate-400">Department Login ID / Password</label>
+                <input type="text" id="deptIdInput" placeholder="Dept ID (e.g. SEC-ADMIN-01)" class="w-full mt-1 bg-slate-800 border border-slate-700 text-sm rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-500">
+            </div>
+            <button onclick="loginDepartment()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-3 rounded-xl transition text-sm">Access Department Dashboard</button>
+        </div>
+    </div>
+</div>
+
+<!-- MAIN DASHBOARD -->
+<div id="appContent" class="hidden flex flex-col h-full overflow-hidden bg-white">
+    
+    <!-- TOP HEADER -->
+    <header class="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-4 shrink-0">
+        <div class="flex items-center space-x-3 w-64">
+            <div class="flex items-center space-x-2">
+                <div class="bg-blue-600 text-white w-9 h-9 rounded-xl flex items-center justify-center font-bold text-lg shadow-md shadow-blue-500/20">
                     <i class="fa-solid fa-shield-halved"></i>
                 </div>
-                <h2 id="authTitle" class="text-2xl font-bold text-gray-900">Phoenix Shield</h2>
-                <p id="authSubtitle" class="text-xs text-gray-400 mt-1">Private Encrypted Cloud Drive Access</p>
+                <span class="text-xl font-normal text-gray-700 tracking-tight">Phoenix Drive</span>
             </div>
+        </div>
+        
+        <div class="flex-1 max-w-2xl mx-4" id="searchContainer">
+            <div class="relative bg-gray-100 hover:bg-gray-200 focus-within:bg-white focus-within:shadow-md rounded-full flex items-center px-4 py-2 transition">
+                <span class="text-gray-500 mr-3"><i class="fa-solid fa-search"></i></span>
+                <input type="text" id="searchInput" oninput="filterFiles()" placeholder="Search in Drive or Enterprise Hub" class="w-full bg-transparent focus:outline-none text-sm text-gray-700">
+            </div>
+        </div>
 
-            <div class="space-y-3">
-                <div id="regExtraFields" class="hidden space-y-3">
-                    <div>
-                        <label class="text-xs font-semibold text-gray-600">Corporate Email ID</label>
-                        <input type="email" id="emailInput" placeholder="name@phoenixshield.online" class="w-full mt-1 bg-gray-50 border border-gray-300 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    </div>
-                    <div class="grid grid-cols-2 gap-2">
-                        <div>
-                            <label class="text-xs font-semibold text-gray-600">Phone Number</label>
-                            <input type="text" id="phoneInput" placeholder="+91 98765..." class="w-full mt-1 bg-gray-50 border border-gray-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        </div>
-                        <div>
-                            <label class="text-xs font-semibold text-gray-600">Date of Birth</label>
-                            <input type="text" id="dobInput" placeholder="DD/MM/YYYY" class="w-full mt-1 bg-gray-50 border border-gray-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        </div>
-                    </div>
-                </div>
+        <div class="flex items-center space-x-3 relative">
+            <button class="text-gray-600 hover:bg-gray-100 p-2.5 rounded-full"><i class="fa-solid fa-gear text-lg"></i></button>
+            <div onclick="toggleProfilePopup()" class="w-9 h-9 bg-blue-600 text-white rounded-full flex items-center justify-center font-semibold cursor-pointer shadow-sm hover:opacity-90" id="userAvatarBtn">N</div>
 
-                <div>
-                    <label class="text-xs font-semibold text-gray-600">Username</label>
-                    <input type="text" id="usernameInput" placeholder="Enter username" class="w-full mt-1 bg-gray-50 border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                </div>
-                <div>
-                    <label class="text-xs font-semibold text-gray-600">Password</label>
-                    <input type="password" id="passwordInput" placeholder="Enter secure password" class="w-full mt-1 bg-gray-50 border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                </div>
-                <div id="authMessage" class="text-xs text-red-500 text-center font-medium"></div>
-
-                <button id="authBtn" onclick="handleAuth()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl transition text-sm shadow-md shadow-blue-600/20">Login to Drive</button>
+            <!-- Profile Popup Menu -->
+            <div id="profilePopup" class="hidden absolute right-0 top-12 w-80 bg-white rounded-3xl shadow-2xl border border-gray-200 z-50 p-6 text-center">
+                <p class="text-xs text-gray-500 font-medium truncate" id="popupEmail">nitin@phoenixshield.online</p>
+                <div class="w-16 h-16 bg-blue-600 text-white rounded-full mx-auto flex items-center justify-center text-2xl font-bold my-3 shadow-md" id="popupAvatarLetter">N</div>
+                <h3 class="text-lg font-bold text-gray-800" id="popupUsername">Nitin Mor</h3>
+                <p class="text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full inline-block mt-1 font-semibold">Verified Secure Account</p>
                 
-                <div class="flex items-center justify-between pt-3 border-t border-gray-100 mt-4">
-                    <button onclick="toggleAuthMode()" id="switchAuthText" class="text-xs text-blue-600 hover:underline font-medium">Create new account</button>
-                    <button onclick="openEnterprisePortal()" class="text-xs text-purple-600 hover:underline font-semibold"><i class="fa-solid fa-building-shield mr-1"></i>Enterprise Gateway</button>
+                <div class="mt-6 border-t border-gray-100 pt-4 text-left space-y-3">
+                    <div class="text-xs text-gray-600 flex justify-between"><span>Phone:</span> <strong id="popupPhone">+91 9876543210</strong></div>
+                    <div class="text-xs text-gray-600 flex justify-between"><span>DOB:</span> <strong id="popupDob">11/02/2004</strong></div>
+                </div>
+
+                <div class="mt-6 pt-4 border-t border-gray-100 flex justify-between items-center">
+                    <button onclick="logout()" class="w-full bg-red-50 hover:bg-red-100 text-red-600 py-2.5 rounded-xl font-medium text-xs transition">Sign out of account</button>
                 </div>
             </div>
         </div>
-    </div>
+    </header>
 
-    <!-- ENTERPRISE LICENSE & DEPARTMENT LOGIN MODAL -->
-    <div id="enterpriseModal" class="hidden fixed inset-0 bg-slate-950 bg-opacity-85 flex items-center justify-center z-50">
-        <div class="bg-slate-900 text-slate-100 p-8 rounded-3xl shadow-2xl w-[500px] border border-slate-800">
-            <div class="flex justify-between items-center mb-6">
-                <div class="flex items-center space-x-3">
-                    <div class="bg-purple-600 text-white p-2.5 rounded-xl"><i class="fa-solid fa-network-wired"></i></div>
-                    <div>
-                        <h3 class="text-lg font-bold">Enterprise Corporate Gateway</h3>
-                        <p class="text-xs text-slate-400">Multi-Department Secure Access Hub</p>
-                    </div>
-                </div>
-                <button onclick="closeEnterprisePortal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
-            </div>
+    <!-- MAIN BODY CONTAINER -->
+    <div class="flex flex-1 overflow-hidden">
+        
+        <!-- LEFT SIDEBAR -->
+        <aside id="mainSidebar" class="w-64 bg-white p-3 flex flex-col justify-between shrink-0 select-none">
+            <div class="space-y-3">
+                <button onclick="document.getElementById('fileInput').click()" class="bg-white hover:shadow-lg border border-gray-200 text-gray-700 font-medium px-6 py-3.5 rounded-2xl flex items-center space-x-4 transition shadow-sm group">
+                    <svg class="w-6 h-6" viewBox="0 0 36 36"><path fill="#34A853" d="M16 16v14h4V20z"></path><path fill="#4285F4" d="M30 16H20l-4 4h14z"></path><path fill="#FBBC05" d="M6 16h10l4-4H6z"></path><path fill="#EA4335" d="M20 16V2h-4v14z"></path><path fill="#2684FC" d="M16 16H2v4h14z"></path></svg>
+                    <span class="text-sm font-medium">New</span>
+                </button>
+                <input type="file" id="fileInput" class="hidden" onchange="uploadFile(event)">
 
-            <div id="entKeyStep" class="space-y-4">
-                <div>
-                    <label class="text-xs font-semibold text-slate-400">Corporate License Key</label>
-                    <input type="text" id="enterpriseKeyInput" placeholder="MNC-SECURE-KEY-2026-X99" class="w-full mt-1 bg-slate-800 border border-slate-700 text-blue-400 font-mono text-xs rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500">
-                </div>
-                <div id="enterpriseKeyMsg" class="text-xs text-red-400 font-mono"></div>
-                <button onclick="submitEnterpriseKey()" class="w-full bg-purple-600 hover:bg-purple-500 text-white font-semibold py-3 rounded-xl transition text-sm">Verify License Key</button>
-            </div>
-
-            <div id="entDeptStep" class="hidden space-y-4">
-                <div>
-                    <label class="text-xs font-semibold text-slate-400">Select Corporate Department</label>
-                    <select id="deptSelect" class="w-full mt-1 bg-slate-800 border border-slate-700 text-slate-200 text-sm rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500">
-                        <option value="Cybersecurity">Cybersecurity (IDS Monitored)</option>
-                        <option value="Human Resources (HR)">Human Resources (HR)</option>
-                        <option value="Finance & Accounts">Finance & Accounts</option>
-                        <option value="Sales">Sales</option>
-                        <option value="Information Technology (IT)">Information Technology (IT)</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="text-xs font-semibold text-slate-400">Employee ID</label>
-                    <input type="text" id="deptIdInput" placeholder="e.g. IT-ADMIN-01" class="w-full mt-1 bg-slate-800 border border-slate-700 text-sm rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-500">
-                </div>
-                <div>
-                    <label class="text-xs font-semibold text-slate-400">Password</label>
-                    <input type="password" id="deptPasswordInput" placeholder="Enter enterprise password" class="w-full mt-1 bg-slate-800 border border-slate-700 text-sm rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-500">
-                </div>
-                <button onclick="loginDepartment()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-3 rounded-xl transition text-sm">Access Department Dashboard</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- MAIN DASHBOARD -->
-    <div id="appContent" class="hidden flex flex-col h-full overflow-hidden bg-white">
-        <header class="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-4 shrink-0">
-            <div class="flex items-center space-x-3 w-64">
-                <div class="flex items-center space-x-2">
-                    <div class="bg-blue-600 text-white w-9 h-9 rounded-xl flex items-center justify-center font-bold text-lg shadow-md shadow-blue-500/20">
-                        <i class="fa-solid fa-shield-halved"></i>
-                    </div>
-                    <span class="text-xl font-normal text-gray-700 tracking-tight">Phoenix Drive</span>
-                </div>
-            </div>
-            
-            <div class="flex-1 max-w-2xl mx-4" id="searchContainer">
-                <div class="relative bg-gray-100 hover:bg-gray-200 focus-within:bg-white focus-within:shadow-md rounded-full flex items-center px-4 py-2 transition">
-                    <span class="text-gray-500 mr-3"><i class="fa-solid fa-search"></i></span>
-                    <input type="text" id="searchInput" oninput="filterFiles()" placeholder="Search in Drive or Enterprise Hub" class="w-full bg-transparent focus:outline-none text-sm text-gray-700">
-                </div>
-            </div>
-
-            <div class="flex items-center space-x-3 relative">
-                <button class="text-gray-600 hover:bg-gray-100 p-2.5 rounded-full"><i class="fa-solid fa-gear text-lg"></i></button>
-                <div onclick="toggleProfilePopup()" class="w-9 h-9 bg-blue-600 text-white rounded-full flex items-center justify-center font-semibold cursor-pointer shadow-sm hover:opacity-90" id="userAvatarBtn">N</div>
-
-                <div id="profilePopup" class="hidden absolute right-0 top-12 w-80 bg-white rounded-3xl shadow-2xl border border-gray-200 z-50 p-6 text-center">
-                    <p class="text-xs text-gray-500 font-medium truncate" id="popupEmail">nitin@phoenixshield.online</p>
-                    <div class="w-16 h-16 bg-blue-600 text-white rounded-full mx-auto flex items-center justify-center text-2xl font-bold my-3 shadow-md" id="popupAvatarLetter">N</div>
-                    <h3 class="text-lg font-bold text-gray-800" id="popupUsername">Nitin Mor</h3>
-                    <p class="text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full inline-block mt-1 font-semibold">Verified Secure Account</p>
-                    
-                    <div class="mt-6 border-t border-gray-100 pt-4 text-left space-y-3">
-                        <div class="text-xs text-gray-600 flex justify-between"><span>Phone:</span> <strong id="popupPhone">+91 9876543210</strong></div>
-                        <div class="text-xs text-gray-600 flex justify-between"><span>DOB:</span> <strong id="popupDob">11/02/2004</strong></div>
-                    </div>
-
-                    <div class="mt-6 pt-4 border-t border-gray-100 flex justify-between items-center">
-                        <button onclick="logout()" class="w-full bg-red-50 hover:bg-red-100 text-red-600 py-2.5 rounded-xl font-medium text-xs transition">Sign out of account</button>
-                    </div>
-                </div>
-            </div>
-        </header>
-
-        <div class="flex flex-1 overflow-hidden">
-            <aside id="mainSidebar" class="w-64 bg-white p-3 flex flex-col justify-between shrink-0 select-none">
-                <div class="space-y-3">
-                    <button onclick="document.getElementById('fileInput').click()" class="bg-white hover:shadow-lg border border-gray-200 text-gray-700 font-medium px-6 py-3.5 rounded-2xl flex items-center space-x-4 transition shadow-sm group">
-                        <svg class="w-6 h-6" viewBox="0 0 36 36"><path fill="#34A853" d="M16 16v14h4V20z"></path><path fill="#4285F4" d="M30 16H20l-4 4h14z"></path><path fill="#FBBC05" d="M6 16h10l4-4H6z"></path><path fill="#EA4335" d="M20 16V2h-4v14z"></path><path fill="#2684FC" d="M16 16H2v4h14z"></path></svg>
-                        <span class="text-sm font-medium">New</span>
-                    </button>
-                    <input type="file" id="fileInput" class="hidden" onchange="uploadFile(event)">
-
-                    <nav class="space-y-0.5 text-sm font-medium">
-                        <a href="#" onclick="switchSection('all', event)" id="nav-all" class="flex items-center space-x-4 px-4 py-2.5 rounded-r-full bg-blue-50 text-blue-700 transition"><i class="fa-solid fa-house w-5"></i><span>Home</span></a>
-                        <a href="#" onclick="switchSection('mydrive', event)" id="nav-mydrive" class="flex items-center space-x-4 px-4 py-2.5 rounded-r-full text-gray-700 hover:bg-gray-100 transition"><i class="fa-solid fa-hard-drive w-5 text-gray-500"></i><span>My Drive</span></a>
-                        <a href="#" onclick="switchSection('image', event)" id="nav-image" class="flex items-center space-x-4 px-4 py-2.5 rounded-r-full text-gray-700 hover:bg-gray-100 transition"><i class="fa-solid fa-image w-5 text-emerald-600"></i><span>Images</span></a>
-                        <a href="#" onclick="switchSection('video', event)" id="nav-video" class="flex items-center space-x-4 px-4 py-2.5 rounded-r-full text-gray-700 hover:bg-gray-100 transition"><i class="fa-solid fa-video w-5 text-purple-600"></i><span>Videos</span></a>
-                    </nav>
-
-                    <hr class="border-gray-200 my-3">
-
-                    <nav class="space-y-0.5 text-sm text-gray-600">
-                        <a href="#" onclick="promptCreateFolder()" class="flex items-center space-x-4 px-4 py-2 rounded-r-full hover:bg-gray-100 transition"><i class="fa-solid fa-folder-plus w-5 text-amber-500"></i><span>New Folder</span></a>
-                        <a href="#" onclick="switchSection('trash', event)" id="nav-trash" class="flex items-center space-x-4 px-4 py-2 rounded-r-full hover:bg-gray-100 transition"><i class="fa-solid fa-trash w-5 text-gray-500"></i><span>Trash Bin</span></a>
-                    </nav>
-                </div>
-
-                <div class="px-4 py-3 bg-gray-50 rounded-2xl border border-gray-100 space-y-2">
-                    <div class="flex items-center space-x-3 text-gray-600">
-                        <i class="fa-solid fa-cloud text-blue-500"></i>
-                        <span class="text-xs font-medium">Storage Used</span>
-                    </div>
-                    <div class="w-full bg-gray-200 h-1.5 rounded-full overflow-hidden">
-                        <div class="bg-blue-600 h-full w-[12%]"></div>
-                    </div>
-                    <p class="text-[11px] text-gray-400">17.39 GB of 400 GB used</p>
-                </div>
-            </aside>
-
-            <aside id="entSidebar" class="hidden w-64 bg-slate-900 text-slate-200 border-r border-slate-800 p-3 flex flex-col justify-between shrink-0 overflow-y-auto">
-                <nav class="space-y-1 text-xs">
-                    <div class="text-[10px] uppercase tracking-wider text-slate-500 px-3 py-1 font-bold">Enterprise Connect</div>
-                    <a href="#" onclick="switchEntTab('dashboard', event)" id="ent-nav-dashboard" class="flex items-center space-x-3 px-3 py-2 rounded-xl bg-purple-600 text-white font-medium transition"><i class="fa-solid fa-house w-4"></i><span>Dashboard</span></a>
-                    <a href="#" onclick="switchEntTab('employees', event)" id="ent-nav-employees" class="flex items-center space-x-3 px-3 py-2 rounded-xl text-slate-300 hover:bg-slate-800 transition"><i class="fa-solid fa-users w-4"></i><span>Employees</span></a>
-                    <a href="#" onclick="switchEntTab('attendance', event)" id="ent-nav-attendance" class="flex items-center space-x-3 px-3 py-2 rounded-xl text-slate-300 hover:bg-slate-800 transition"><i class="fa-solid fa-clock w-4"></i><span>Attendance</span></a>
-                    <a href="#" onclick="switchEntTab('leave', event)" id="ent-nav-leave" class="flex items-center space-x-3 px-3 py-2 rounded-xl text-slate-300 hover:bg-slate-800 transition"><i class="fa-solid fa-calendar-days w-4"></i><span>Leave Management</span></a>
-                    <a href="#" onclick="switchEntTab('tasks', event)" id="ent-nav-tasks" class="flex items-center space-x-3 px-3 py-2 rounded-xl text-slate-300 hover:bg-slate-800 transition"><i class="fa-solid fa-list-check w-4"></i><span>Tasks & Kanban</span></a>
-                    <a href="#" onclick="switchEntTab('projects', event)" id="ent-nav-projects" class="flex items-center space-x-3 px-3 py-2 rounded-xl text-slate-300 hover:bg-slate-800 transition"><i class="fa-solid fa-diagram-project w-4"></i><span>Projects</span></a>
-                    <a href="#" onclick="switchEntTab('communication', event)" id="ent-nav-communication" class="flex items-center space-x-3 px-3 py-2 rounded-xl text-slate-300 hover:bg-slate-800 transition"><i class="fa-solid fa-comments w-4"></i><span>Communication</span></a>
-                    <a href="#" onclick="switchEntTab('calendar', event)" id="ent-nav-calendar" class="flex items-center space-x-3 px-3 py-2 rounded-xl text-slate-300 hover:bg-slate-800 transition"><i class="fa-solid fa-calendar w-4"></i><span>Calendar & Meet</span></a>
-                    <a href="#" onclick="switchEntTab('payroll', event)" id="ent-nav-payroll" class="flex items-center space-x-3 px-3 py-2 rounded-xl text-slate-300 hover:bg-slate-800 transition"><i class="fa-solid fa-wallet w-4"></i><span>Payroll</span></a>
-                    <a href="#" onclick="switchEntTab('documents', event)" id="ent-nav-documents" class="flex items-center space-x-3 px-3 py-2 rounded-xl text-slate-300 hover:bg-slate-800 transition"><i class="fa-solid fa-file-contract w-4"></i><span>Documents</span></a>
-                    <a href="#" onclick="switchEntTab('training', event)" id="ent-nav-training" class="flex items-center space-x-3 px-3 py-2 rounded-xl text-slate-300 hover:bg-slate-800 transition"><i class="fa-solid fa-graduation-cap w-4"></i><span>Training & AI HR</span></a>
-                    <a href="#" onclick="switchEntTab('performance', event)" id="ent-nav-performance" class="flex items-center space-x-3 px-3 py-2 rounded-xl text-slate-300 hover:bg-slate-800 transition"><i class="fa-solid fa-chart-line w-4"></i><span>Performance (KPI)</span></a>
-                    <a href="#" onclick="switchEntTab('helpdesk', event)" id="ent-nav-helpdesk" class="flex items-center space-x-3 px-3 py-2 rounded-xl text-slate-300 hover:bg-slate-800 transition"><i class="fa-solid fa-circle-question w-4"></i><span>Help Desk</span></a>
-                    <a href="#" onclick="switchEntTab('admin', event)" id="ent-nav-admin" class="flex items-center space-x-3 px-3 py-2 rounded-xl text-slate-300 hover:bg-slate-800 transition"><i class="fa-solid fa-user-gear w-4"></i><span>Admin Panel</span></a>
-                    <a href="#" onclick="switchEntTab('analytics', event)" id="ent-nav-analytics" class="flex items-center space-x-3 px-3 py-2 rounded-xl text-slate-300 hover:bg-slate-800 transition"><i class="fa-solid fa-chart-pie w-4"></i><span>Analytics & IDS</span></a>
+                <nav class="space-y-0.5 text-sm font-medium">
+                    <a href="#" onclick="switchSection('all', event)" id="nav-all" class="flex items-center space-x-4 px-4 py-2.5 rounded-r-full bg-blue-50 text-blue-700 transition"><i class="fa-solid fa-house w-5"></i><span>Home</span></a>
+                    <a href="#" onclick="switchSection('mydrive', event)" id="nav-mydrive" class="flex items-center space-x-4 px-4 py-2.5 rounded-r-full text-gray-700 hover:bg-gray-100 transition"><i class="fa-solid fa-hard-drive w-5 text-gray-500"></i><span>My Drive</span></a>
+                    <a href="#" onclick="switchSection('image', event)" id="nav-image" class="flex items-center space-x-4 px-4 py-2.5 rounded-r-full text-gray-700 hover:bg-gray-100 transition"><i class="fa-solid fa-image w-5 text-emerald-600"></i><span>Images</span></a>
+                    <a href="#" onclick="switchSection('video', event)" id="nav-video" class="flex items-center space-x-4 px-4 py-2.5 rounded-r-full text-gray-700 hover:bg-gray-100 transition"><i class="fa-solid fa-video w-5 text-purple-600"></i><span>Videos</span></a>
                 </nav>
-            </aside>
 
-            <main class="flex-1 bg-white p-6 overflow-y-auto flex flex-col">
-                <div id="driveContentPanel" class="space-y-6">
-                    <h2 id="sectionHeadingTitle" class="text-xl font-normal text-gray-700">Welcome to Phoenix Drive</h2>
-                    <div id="foldersSectionWrapper" class="space-y-2">
-                        <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Folders</h3>
-                        <div id="foldersContainer" class="grid grid-cols-4 gap-4"></div>
-                    </div>
-                    <div class="space-y-3 pt-4">
-                        <h3 id="sectionHeading" class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Suggested Files & Uploads</h3>
-                        <div id="fileListContainer" class="space-y-2"></div>
-                    </div>
+                <hr class="border-gray-200 my-3">
+
+                <nav class="space-y-0.5 text-sm text-gray-600">
+                    <a href="#" onclick="promptCreateFolder()" class="flex items-center space-x-4 px-4 py-2 rounded-r-full hover:bg-gray-100 transition"><i class="fa-solid fa-folder-plus w-5 text-amber-500"></i><span>New Folder</span></a>
+                    <a href="#" onclick="switchSection('trash', event)" id="nav-trash" class="flex items-center space-x-4 px-4 py-2 rounded-r-full hover:bg-gray-100 transition"><i class="fa-solid fa-trash w-5 text-gray-500"></i><span>Trash Bin</span></a>
+                </nav>
+            </div>
+
+            <div class="px-4 py-3 bg-gray-50 rounded-2xl border border-gray-100 space-y-2">
+                <div class="flex items-center space-x-3 text-gray-600">
+                    <i class="fa-solid fa-cloud text-blue-500"></i>
+                    <span class="text-xs font-medium">Storage Used</span>
+                </div>
+                <div class="w-full bg-gray-200 h-1.5 rounded-full overflow-hidden">
+                    <div class="bg-blue-600 h-full w-[12%]"></div>
+                </div>
+                <p class="text-[11px] text-gray-400">17.39 GB of 400 GB used</p>
+            </div>
+        </aside>
+
+        <!-- ENTERPRISE SIDEBAR -->
+        <aside id="entSidebar" class="hidden w-64 bg-slate-900 text-slate-200 border-r border-slate-800 p-3 flex flex-col justify-between shrink-0 overflow-y-auto">
+            <nav class="space-y-1 text-xs">
+                <div class="text-[10px] uppercase tracking-wider text-slate-500 px-3 py-1 font-bold">Enterprise Connect</div>
+                <a href="#" onclick="switchEntTab('dashboard', event)" id="ent-nav-dashboard" class="flex items-center space-x-3 px-3 py-2 rounded-xl bg-purple-600 text-white font-medium transition"><i class="fa-solid fa-house w-4"></i><span>Dashboard</span></a>
+                <a href="#" onclick="switchEntTab('employees', event)" id="ent-nav-employees" class="flex items-center space-x-3 px-3 py-2 rounded-xl text-slate-300 hover:bg-slate-800 transition"><i class="fa-solid fa-users w-4"></i><span>Employees</span></a>
+                <a href="#" onclick="switchEntTab('attendance', event)" id="ent-nav-attendance" class="flex items-center space-x-3 px-3 py-2 rounded-xl text-slate-300 hover:bg-slate-800 transition"><i class="fa-solid fa-clock w-4"></i><span>Attendance</span></a>
+                <a href="#" onclick="switchEntTab('leave', event)" id="ent-nav-leave" class="flex items-center space-x-3 px-3 py-2 rounded-xl text-slate-300 hover:bg-slate-800 transition"><i class="fa-solid fa-calendar-days w-4"></i><span>Leave Management</span></a>
+                <a href="#" onclick="switchEntTab('tasks', event)" id="ent-nav-tasks" class="flex items-center space-x-3 px-3 py-2 rounded-xl text-slate-300 hover:bg-slate-800 transition"><i class="fa-solid fa-list-check w-4"></i><span>Tasks & Kanban</span></a>
+                <a href="#" onclick="switchEntTab('projects', event)" id="ent-nav-projects" class="flex items-center space-x-3 px-3 py-2 rounded-xl text-slate-300 hover:bg-slate-800 transition"><i class="fa-solid fa-diagram-project w-4"></i><span>Projects</span></a>
+                <a href="#" onclick="switchEntTab('communication', event)" id="ent-nav-communication" class="flex items-center space-x-3 px-3 py-2 rounded-xl text-slate-300 hover:bg-slate-800 transition"><i class="fa-solid fa-comments w-4"></i><span>Communication</span></a>
+                <a href="#" onclick="switchEntTab('calendar', event)" id="ent-nav-calendar" class="flex items-center space-x-3 px-3 py-2 rounded-xl text-slate-300 hover:bg-slate-800 transition"><i class="fa-solid fa-calendar w-4"></i><span>Calendar & Meet</span></a>
+                <a href="#" onclick="switchEntTab('payroll', event)" id="ent-nav-payroll" class="flex items-center space-x-3 px-3 py-2 rounded-xl text-slate-300 hover:bg-slate-800 transition"><i class="fa-solid fa-wallet w-4"></i><span>Payroll</span></a>
+                <a href="#" onclick="switchEntTab('documents', event)" id="ent-nav-documents" class="flex items-center space-x-3 px-3 py-2 rounded-xl text-slate-300 hover:bg-slate-800 transition"><i class="fa-solid fa-file-contract w-4"></i><span>Documents</span></a>
+                <a href="#" onclick="switchEntTab('training', event)" id="ent-nav-training" class="flex items-center space-x-3 px-3 py-2 rounded-xl text-slate-300 hover:bg-slate-800 transition"><i class="fa-solid fa-graduation-cap w-4"></i><span>Training & AI HR</span></a>
+                <a href="#" onclick="switchEntTab('performance', event)" id="ent-nav-performance" class="flex items-center space-x-3 px-3 py-2 rounded-xl text-slate-300 hover:bg-slate-800 transition"><i class="fa-solid fa-chart-line w-4"></i><span>Performance (KPI)</span></a>
+                <a href="#" onclick="switchEntTab('helpdesk', event)" id="ent-nav-helpdesk" class="flex items-center space-x-3 px-3 py-2 rounded-xl text-slate-300 hover:bg-slate-800 transition"><i class="fa-solid fa-circle-question w-4"></i><span>Help Desk</span></a>
+                <a href="#" onclick="switchEntTab('admin', event)" id="ent-nav-admin" class="flex items-center space-x-3 px-3 py-2 rounded-xl text-slate-300 hover:bg-slate-800 transition"><i class="fa-solid fa-user-gear w-4"></i><span>Admin Panel</span></a>
+                <a href="#" onclick="switchEntTab('analytics', event)" id="ent-nav-analytics" class="flex items-center space-x-3 px-3 py-2 rounded-xl text-slate-300 hover:bg-slate-800 transition"><i class="fa-solid fa-chart-pie w-4"></i><span>Analytics & IDS</span></a>
+            </nav>
+        </aside>
+
+        <!-- MAIN CONTENT DISPLAY AREA -->
+        <main class="flex-1 bg-white p-6 overflow-y-auto flex flex-col">
+            <!-- Private Drive Panel -->
+            <div id="driveContentPanel" class="space-y-6">
+                <h2 id="sectionHeadingTitle" class="text-xl font-normal text-gray-700">Welcome to Phoenix Drive</h2>
+                
+                <div id="foldersSectionWrapper" class="space-y-2">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Folders</h3>
+                    <div id="foldersContainer" class="grid grid-cols-4 gap-4"></div>
                 </div>
 
-                <div id="enterpriseDashboard" class="hidden space-y-6">
-                    <div class="flex justify-between items-center border-b border-gray-100 pb-4">
-                        <h1 id="deptTitle" class="text-xl font-bold text-slate-900">Department Dashboard</h1>
-                        <span id="roleBadge" class="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-xs font-semibold">Role: Employee</span>
-                    </div>
-                    <div id="entTabContent" class="space-y-4"></div>
+                <div class="space-y-3 pt-4">
+                    <h3 id="sectionHeading" class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Suggested Files & Uploads</h3>
+                    <div id="fileListContainer" class="space-y-2"></div>
                 </div>
-            </main>
-        </div>
+            </div>
+
+            <!-- Enterprise Dashboard Panel -->
+            <div id="enterpriseDashboard" class="hidden space-y-6">
+                <div class="flex justify-between items-center border-b border-gray-100 pb-4">
+                    <h1 id="deptTitle" class="text-xl font-bold text-slate-900">Department Dashboard</h1>
+                    <span id="roleBadge" class="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-xs font-semibold">Role: Employee</span>
+                </div>
+                <div id="entTabContent" class="space-y-4"></div>
+            </div>
+        </main>
     </div>
+</div>
 
-    <script>
-        let isRegisterMode = false;
-        let currentUser = '';
-        let currentDept = '';
-        let allFiles = [];
-        let currentFilter = 'all';
-        let activeFolder = null;
+<!-- JAVASCRIPT LOGIC -->
+<script>
+    let isRegisterMode = false;
+    let currentUser = '';
+    let currentDept = '';
+    let allFiles = [];
+    let currentFilter = 'all';
+    let activeFolder = null;
 
-        function toggleAuthMode() {
-            isRegisterMode = !isRegisterMode;
-            document.getElementById('authTitle').innerText = isRegisterMode ? "Create Account" : "Phoenix Shield";
-            document.getElementById('authSubtitle').innerText = isRegisterMode ? "Advanced Secure Registration" : "Private Encrypted Cloud Drive Access";
-            document.getElementById('authBtn').innerText = isRegisterMode ? "Register & Verify OTP" : "Login to Drive";
-            document.getElementById('switchAuthText').innerText = isRegisterMode ? "Already have an account? Login" : "Create new account";
-            document.getElementById('regExtraFields').classList.toggle('hidden', !isRegisterMode);
-            document.getElementById('authMessage').innerText = "";
-        }
+    function toggleAuthMode() {
+        isRegisterMode = !isRegisterMode;
+        document.getElementById('authTitle').innerText = isRegisterMode ? "Create Account" : "Phoenix Shield";
+        document.getElementById('authSubtitle').innerText = isRegisterMode ? "Advanced Secure Registration" : "Private Encrypted Cloud Drive Access";
+        document.getElementById('authBtn').innerText = isRegisterMode ? "Register & Verify OTP" : "Login to Drive";
+        document.getElementById('switchAuthText').innerText = isRegisterMode ? "Already have an account? Login" : "Create new account";
+        document.getElementById('regExtraFields').classList.toggle('hidden', !isRegisterMode);
+        document.getElementById('authMessage').innerText = "";
+    }
 
-        function toggleProfilePopup() {
-            document.getElementById('profilePopup').classList.toggle('hidden');
-        }
+    function toggleProfilePopup() {
+        document.getElementById('profilePopup').classList.toggle('hidden');
+    }
 
-        async function handleAuth() {
-            const username = document.getElementById('usernameInput').value;
-            const password = document.getElementById('passwordInput').value;
-            const email = document.getElementById('emailInput').value || "user@phoenixshield.online";
-            const phone = document.getElementById('phoneInput').value || "+91 9876543210";
-            const dob = document.getElementById('dobInput').value || "11/02/2004";
-            const msgDiv = document.getElementById('authMessage');
+    async function handleAuth() {
+        const username = document.getElementById('usernameInput').value;
+        const password = document.getElementById('passwordInput').value;
+        const email = document.getElementById('emailInput').value || "user@phoenixshield.online";
+        const phone = document.getElementById('phoneInput').value || "+91 9876543210";
+        const dob = document.getElementById('dobInput').value || "11/02/2004";
+        const msgDiv = document.getElementById('authMessage');
 
-            if (!username || !password) { msgDiv.innerText = "Username and Password required!"; return; }
+        if (!username || !password) { msgDiv.innerText = "Username and Password required!"; return; }
 
-            const endpoint = isRegisterMode ? '/api/private/register' : '/api/private/login';
-            const payload = isRegisterMode ? { email, username, password, phone, dob } : { username, password };
+        const endpoint = isRegisterMode ? '/api/private/register' : '/api/private/login';
+        const payload = isRegisterMode ? { email, username, password, phone, dob } : { username, password };
 
-            try {
-                const response = await fetch(endpoint, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                const data = await response.json();
-                if (response.ok) {
-                    if (isRegisterMode) { 
-                        alert("Account created! OTP Verified successfully. Please login now."); 
-                        toggleAuthMode(); 
-                    } else {
-                        currentUser = data.username;
-                        document.getElementById('authScreen').classList.add('hidden');
-                        document.getElementById('appContent').classList.remove('hidden');
-                        document.getElementById('userAvatarBtn').innerText = currentUser.charAt(0).toUpperCase();
-                        document.getElementById('popupUsername').innerText = currentUser;
-                        document.getElementById('popupEmail').innerText = (email !== "user@phoenixshield.online" ? email : currentUser.toLowerCase() + "@phoenixshield.online");
-                        document.getElementById('popupAvatarLetter').innerText = currentUser.charAt(0).toUpperCase();
-                        document.getElementById('popupPhone').innerText = data.phone || phone;
-                        document.getElementById('popupDob').innerText = data.dob || dob;
-                        loadFiles();
-                        loadFolders();
-                    }
-                } else { msgDiv.innerText = data.detail || "Failed"; }
-            } catch (err) { console.error(err); msgDiv.innerText = "Server connection error!"; }
-        }
-
-        async function loadFiles() {
-            if (!currentUser) return;
-            try {
-                const res = await fetch(`/api/private/files/${currentUser}`);
-                allFiles = await res.json();
-                renderFiles(allFiles);
-            } catch (err) { console.error("Error loading files:", err); }
-        }
-
-        async function loadTrash() {
-            if (!currentUser) return;
-            try {
-                const res = await fetch(`/api/private/trash/${currentUser}`);
-                const trashFiles = await res.json();
-                const container = document.getElementById('fileListContainer');
-                container.innerHTML = "";
-                if (trashFiles.length === 0) {
-                    container.innerHTML = `<p class="text-xs text-gray-400 py-4 text-center">Trash bin is empty.</p>`;
-                    return;
+        try {
+            const response = await fetch(endpoint, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const data = await response.json();
+            if (response.ok) {
+                if (isRegisterMode) { 
+                    alert("Account created! OTP Verified successfully. Please login now."); 
+                    toggleAuthMode(); 
+                } else {
+                    currentUser = data.username;
+                    document.getElementById('authScreen').classList.add('hidden');
+                    document.getElementById('appContent').classList.remove('hidden');
+                    document.getElementById('userAvatarBtn').innerText = currentUser.charAt(0).toUpperCase();
+                    document.getElementById('popupUsername').innerText = currentUser;
+                    document.getElementById('popupEmail').innerText = (email !== "user@phoenixshield.online" ? email : currentUser.toLowerCase() + "@phoenixshield.online");
+                    document.getElementById('popupAvatarLetter').innerText = currentUser.charAt(0).toUpperCase();
+                    document.getElementById('popupPhone').innerText = data.phone || phone;
+                    document.getElementById('popupDob').innerText = data.dob || dob;
+                    loadFiles();
+                    loadFolders();
                 }
-                trashFiles.forEach(file => {
-                    const row = document.createElement('div');
-                    row.className = "flex items-center justify-between p-3 bg-red-50/50 border border-red-100 rounded-xl";
-                    row.innerHTML = `
-                        <div class="flex items-center space-x-4 flex-1">
-                            <i class="fa-solid fa-file-excel text-red-500 text-lg"></i>
-                            <span class="text-sm font-medium text-gray-600 line-through">${file.filename}</span>
-                        </div>
-                        <span class="text-xs text-gray-400">${file.size}</span>
-                        <span class="text-xs text-red-500 font-semibold px-2 py-1 bg-red-100 rounded">Deleted</span>
-                    `;
-                    container.appendChild(row);
-                });
-            } catch (e) { console.error(e); }
-        }
+            } else { msgDiv.innerText = data.detail || "Failed"; }
+        } catch (err) { console.error(err); }
+    }
 
-        function renderFiles(files) {
-            if (currentFilter === 'trash') { loadTrash(); return; }
+    async function loadFiles() {
+        if (!currentUser) return;
+        try {
+            const res = await fetch(`/api/private/files/${currentUser}`);
+            allFiles = await res.json();
+            renderFiles(allFiles);
+        } catch (err) { console.error("Error loading files:", err); }
+    }
+
+    async function loadTrash() {
+        if (!currentUser) return;
+        try {
+            const res = await fetch(`/api/private/trash/${currentUser}`);
+            const trashFiles = await res.json();
             const container = document.getElementById('fileListContainer');
             container.innerHTML = "";
-
-            let filtered = files;
-            if (activeFolder) filtered = filtered.filter(f => f.folder_name === activeFolder);
-            if (currentFilter === 'image') filtered = filtered.filter(f => f.file_type === 'image');
-            if (currentFilter === 'video') filtered = filtered.filter(f => f.file_type === 'video');
-
-            if (filtered.length === 0) {
-                container.innerHTML = `<p class="text-xs text-gray-400 py-4 text-center">No files found in drive.</p>`;
+            if (trashFiles.length === 0) {
+                container.innerHTML = `<p class="text-xs text-gray-400 py-4 text-center">Trash bin is empty.</p>`;
                 return;
             }
-
-            filtered.forEach(file => {
-                let iconClass = "fa-file text-blue-500";
-                if (file.file_type === 'image') iconClass = "fa-file-image text-emerald-500";
-                if (file.file_type === 'video') iconClass = "fa-file-video text-purple-500";
-
+            trashFiles.forEach(file => {
                 const row = document.createElement('div');
-                row.className = "flex items-center justify-between p-3 hover:bg-gray-50 border-b border-gray-100 rounded-xl transition";
+                row.className = "flex items-center justify-between p-3 bg-red-50/50 border border-red-100 rounded-xl";
                 row.innerHTML = `
                     <div class="flex items-center space-x-4 flex-1">
-                        <i class="fa-solid ${iconClass} text-lg"></i>
-                        <a href="/uploads/${file.filename}" target="_blank" class="text-sm font-medium text-gray-800 hover:text-blue-600 truncate max-w-xs">${file.filename}</a>
+                        <i class="fa-solid fa-file-excel text-red-500 text-lg"></i>
+                        <span class="text-sm font-medium text-gray-600 line-through">${file.filename}</span>
                     </div>
-                    <div class="flex items-center space-x-6 text-xs text-gray-500 w-64">
-                        <span>${file.size}</span>
-                        <span>${file.folder_name !== 'None' ? file.folder_name : 'My Drive'}</span>
-                    </div>
-                    <div class="flex items-center space-x-3">
-                        <a href="/uploads/${file.filename}" target="_blank" class="bg-gray-100 hover:bg-blue-50 text-gray-700 hover:text-blue-600 px-3 py-1.5 rounded-lg text-xs font-medium transition flex items-center gap-1"><i class="fa-solid fa-eye"></i> View</a>
-                        <a href="/download/${file.filename}" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition flex items-center gap-1"><i class="fa-solid fa-download"></i> Download</a>
-                        <button onclick="deleteFile('${file.filename}')" class="text-gray-400 hover:text-red-500 p-2"><i class="fa-solid fa-trash"></i></button>
-                    </div>
+                    <span class="text-xs text-gray-400">${file.size}</span>
+                    <span class="text-xs text-red-500 font-semibold px-2 py-1 bg-red-100 rounded">Deleted</span>
                 `;
                 container.appendChild(row);
             });
+        } catch (e) { console.error(e); }
+    }
+
+    function renderFiles(files) {
+        if (currentFilter === 'trash') { loadTrash(); return; }
+        const container = document.getElementById('fileListContainer');
+        container.innerHTML = "";
+
+        let filtered = files;
+        if (activeFolder) filtered = filtered.filter(f => f.folder_name === activeFolder);
+        if (currentFilter === 'image') filtered = filtered.filter(f => f.file_type === 'image');
+        if (currentFilter === 'video') filtered = filtered.filter(f => f.file_type === 'video');
+
+        if (filtered.length === 0) {
+            container.innerHTML = `<p class="text-xs text-gray-400 py-4 text-center">No files found in drive.</p>`;
+            return;
         }
 
-        function filterFiles() {
-            const query = document.getElementById('searchInput').value.toLowerCase();
-            const searched = allFiles.filter(f => f.filename.toLowerCase().includes(query));
-            renderFiles(searched);
-        }
+        filtered.forEach(file => {
+            let iconClass = "fa-file text-blue-500";
+            if (file.file_type === 'image') iconClass = "fa-file-image text-emerald-500";
+            if (file.file_type === 'video') iconClass = "fa-file-video text-purple-500";
 
-        function switchSection(section, event) {
-            if (event) event.preventDefault();
-            activeFolder = null;
-            currentFilter = section;
-            
-            const foldersWrapper = document.getElementById('foldersSectionWrapper');
-            const heading = document.getElementById('sectionHeadingTitle');
+            const row = document.createElement('div');
+            row.className = "flex items-center justify-between p-3 hover:bg-gray-50 border-b border-gray-100 rounded-xl transition";
+            row.innerHTML = `
+                <div class="flex items-center space-x-4 flex-1">
+                    <i class="fa-solid ${iconClass} text-lg"></i>
+                    <a href="/uploads/${file.filename}" target="_blank" class="text-sm font-medium text-gray-800 hover:text-blue-600 truncate max-w-xs">${file.filename}</a>
+                </div>
+                <div class="flex items-center space-x-6 text-xs text-gray-500 w-64">
+                    <span>${file.size}</span>
+                    <span>${file.folder_name !== 'None' ? file.folder_name : 'My Drive'}</span>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <a href="/uploads/${file.filename}" target="_blank" class="bg-gray-100 hover:bg-blue-50 text-gray-700 hover:text-blue-600 px-3 py-1.5 rounded-lg text-xs font-medium transition flex items-center gap-1"><i class="fa-solid fa-eye"></i> View</a>
+                    <a href="/download/${file.filename}" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition flex items-center gap-1"><i class="fa-solid fa-download"></i> Download</a>
+                    <button onclick="deleteFile('${file.filename}')" class="text-gray-400 hover:text-red-500 p-2"><i class="fa-solid fa-trash"></i></button>
+                </div>
+            `;
+            container.appendChild(row);
+        });
+    }
 
-            if (section === 'trash') {
-                foldersWrapper.classList.add('hidden');
-                heading.innerText = "Trash Bin (Deleted Files)";
-                document.getElementById('sectionHeading').innerText = "Items in Trash";
-                loadTrash();
-            } else {
-                foldersWrapper.classList.remove('hidden');
-                heading.innerText = section === 'image' ? "Scanned Images" : (section === 'video' ? "Video Backups" : "Welcome to Phoenix Drive");
-                document.getElementById('sectionHeading').innerText = "Suggested Files & Uploads";
-                loadFolders();
-                renderFiles(allFiles);
-            }
-        }
+    function filterFiles() {
+        const query = document.getElementById('searchInput').value.toLowerCase();
+        const searched = allFiles.filter(f => f.filename.toLowerCase().includes(query));
+        renderFiles(searched);
+    }
 
-        async function uploadFile(event) {
-            const file = event.target.files[0];
-            if (!file || !currentUser) return;
+    function switchSection(section, event) {
+        if (event) event.preventDefault();
+        activeFolder = null;
+        currentFilter = section;
+        
+        const foldersWrapper = document.getElementById('foldersSectionWrapper');
+        const heading = document.getElementById('sectionHeadingTitle');
 
-            const formData = new FormData();
-            formData.append("file", file);
-            formData.append("username", currentUser);
-            formData.append("folder_name", activeFolder || "None");
-
-            try {
-                const res = await fetch('/api/private/upload', { method: 'POST', body: formData });
-                if (res.ok) loadFiles();
-                else alert("Upload failed.");
-            } catch (err) { console.error(err); }
-        }
-
-        async function deleteFile(filename) {
-            if (!confirm(`Move "${filename}" to trash?`)) return;
-            try {
-                const res = await fetch(`/api/private/files/${currentUser}/${filename}`, { method: 'DELETE' });
-                if (res.ok) loadFiles();
-            } catch (err) { console.error(err); }
-        }
-
-        async function loadFolders() {
-            if (!currentUser) return;
-            try {
-                const response = await fetch(`/api/private/folders/${currentUser}`);
-                const folders = await response.json();
-                const container = document.getElementById('foldersContainer');
-                container.innerHTML = "";
-                if (folders.length === 0) {
-                    container.innerHTML = `<span class="text-gray-400 text-xs italic col-span-4">No folders created</span>`;
-                    return;
-                }
-                folders.forEach(folder => {
-                    const card = document.createElement('div');
-                    card.className = "flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-2xl cursor-pointer transition group";
-                    card.innerHTML = `
-                        <div class="flex items-center space-x-3 truncate" onclick="selectFolder('${folder}')">
-                            <i class="fa-solid fa-folder text-amber-400 text-lg"></i>
-                            <span class="text-sm font-medium text-gray-700 truncate">${folder}</span>
-                        </div>
-                        <button onclick="deleteFolder('${folder}')" class="text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition p-1"><i class="fa-solid fa-trash text-xs"></i></button>
-                    `;
-                    container.appendChild(card);
-                });
-            } catch (err) { console.error("Error loading folders:", err); }
-        }
-
-        function selectFolder(folderName) {
-            activeFolder = activeFolder === folderName ? null : folderName;
+        if (section === 'trash') {
+            foldersWrapper.classList.add('hidden');
+            heading.innerText = "Trash Bin (Deleted Files)";
+            document.getElementById('sectionHeading').innerText = "Items in Trash";
+            loadTrash();
+        } else {
+            foldersWrapper.classList.remove('hidden');
+            heading.innerText = section === 'image' ? "Scanned Images" : (section === 'video' ? "Video Backups" : "Welcome to Phoenix Drive");
+            document.getElementById('sectionHeading').innerText = "Suggested Files & Uploads";
+            loadFolders();
             renderFiles(allFiles);
         }
+    }
 
-        async function promptCreateFolder() {
-            if (!currentUser) return;
-            const folderName = prompt("Enter folder name:");
-            if (!folderName) return;
-            try {
-                const res = await fetch('/api/private/folders', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name: folderName, username: currentUser })
-                });
-                if (res.ok) loadFolders();
-            } catch (err) { console.error(err); }
-        }
+    async function uploadFile(event) {
+        const file = event.target.files[0];
+        if (!file || !currentUser) return;
 
-        async function deleteFolder(foldername) {
-            if (!confirm(`Delete folder "${foldername}" and all its files?`)) return;
-            try {
-                const res = await fetch(`/api/private/folders/${currentUser}/${foldername}`, { method: 'DELETE' });
-                if (res.ok) { activeFolder = null; loadFolders(); loadFiles(); }
-            } catch (e) { console.error(e); }
-        }
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("username", currentUser);
+        formData.append("folder_name", activeFolder || "None");
 
-        function openEnterprisePortal() { document.getElementById('enterpriseModal').classList.remove('hidden'); }
-        function closeEnterprisePortal() { document.getElementById('enterpriseModal').classList.add('hidden'); }
+        try {
+            const res = await fetch('/api/private/upload', { method: 'POST', body: formData });
+            if (res.ok) loadFiles();
+            else alert("Upload failed.");
+        } catch (err) { console.error(err); }
+    }
 
-        async function submitEnterpriseKey() {
-            const key = document.getElementById('enterpriseKeyInput').value.trim();
-            try {
-                const res = await fetch('/api/enterprise/verify-key', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({key})});
-                if (!res.ok) { document.getElementById('enterpriseKeyMsg').innerText='Invalid corporate license key.'; return; }
-                document.getElementById('entKeyStep').classList.add('hidden');
-                document.getElementById('entDeptStep').classList.remove('hidden');
-                document.getElementById('enterpriseKeyMsg').innerText='';
-            } catch(e) { document.getElementById('enterpriseKeyMsg').innerText='Server unavailable.'; }
-        }
+    async function deleteFile(filename) {
+        if (!confirm(`Move "${filename}" to trash?`)) return;
+        try {
+            const res = await fetch(`/api/private/files/${currentUser}/${filename}`, { method: 'DELETE' });
+            if (res.ok) loadFiles();
+        } catch (err) { console.error(err); }
+    }
 
-        async function loginDepartment() {
-            const currentDeptInput = document.getElementById('deptSelect').value;
-            const employeeId = document.getElementById('deptIdInput').value.trim();
-            const password = document.getElementById('deptPasswordInput').value;
-            if (!employeeId || !password) { alert('Employee ID and password are required.'); return; }
-            try {
-                const res = await fetch('/api/enterprise/login', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({employee_id:employeeId,password,department:currentDeptInput})});
-                const data = await res.json();
-                if (!res.ok) { alert(data.detail || 'Enterprise login failed.'); return; }
-                currentUser = data.employee.employee_id;
-                currentDept = data.employee.department;
-                window.enterpriseEmployee = data.employee;
-                localStorage.setItem('phoenix_enterprise_employee', currentUser);
-                localStorage.setItem('phoenix_enterprise_department', currentDept);
-                localStorage.setItem('phoenix_enterprise_role', data.employee.role);
-                closeEnterprisePortal();
-                document.getElementById('authScreen').classList.add('hidden');
-                document.getElementById('appContent').classList.remove('hidden');
-                document.getElementById('mainSidebar').classList.add('hidden');
-                document.getElementById('entSidebar').classList.remove('hidden');
-                document.getElementById('driveContentPanel').classList.add('hidden');
-                document.getElementById('enterpriseDashboard').classList.remove('hidden');
-                document.getElementById('deptTitle').innerText = `${currentDept} - Enterprise Hub`;
-                document.getElementById('roleBadge').innerText = `Role: ${data.employee.role}`;
-                switchEntTab('dashboard', null);
-            } catch(e) { console.error(e); alert('Unable to connect to Enterprise server.'); }
-        }
-
-        async function restoreEnterpriseSession() {
-            const employeeId = localStorage.getItem('phoenix_enterprise_employee');
-            if (!employeeId) return;
-            try {
-                const res = await fetch(`/api/enterprise/me/${encodeURIComponent(employeeId)}`);
-                if (!res.ok) { localStorage.removeItem('phoenix_enterprise_employee'); return; }
-                const data = await res.json();
-                currentUser = data.employee.employee_id;
-                currentDept = data.employee.department;
-                window.enterpriseEmployee = data.employee;
-                document.getElementById('authScreen').classList.add('hidden');
-                document.getElementById('appContent').classList.remove('hidden');
-                document.getElementById('mainSidebar').classList.add('hidden');
-                document.getElementById('entSidebar').classList.remove('hidden');
-                document.getElementById('driveContentPanel').classList.add('hidden');
-                document.getElementById('enterpriseDashboard').classList.remove('hidden');
-                document.getElementById('deptTitle').innerText = `${currentDept} - Enterprise Hub`;
-                document.getElementById('roleBadge').innerText = `Role: ${data.employee.role}`;
-                switchEntTab('dashboard', null);
-            } catch(e) { console.error('Session restore failed',e); }
-        }
-
-        async function entFetch(url, options={}) {
-            const res = await fetch(url, options);
-            let data={}; try { data=await res.json(); } catch(e){}
-            if (!res.ok) throw new Error(data.detail || data.message || 'Request failed');
-            return data;
-        }
-        function entEsc(v){ return String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
-        function entCard(title, body, actions=''){ return `<div class="ent-card"><div class="flex justify-between items-center mb-3"><h3 class="font-semibold text-slate-800 text-sm">${title}</h3>${actions}</div>${body}</div>`; }
-        function entInput(id, placeholder, type='text'){ return `<input id="${id}" class="ent-input" type="${type}" placeholder="${placeholder}">`; }
-        function entSelect(id, values){ return `<select id="${id}" class="ent-input">${values.map(v=>`<option>${v}</option>`).join('')}</select>`; }
-
-        async function switchEntTab(tab, event) {
-            if (event) event.preventDefault();
-            ['dashboard','employees','attendance','leave','tasks','projects','communication','calendar','payroll','documents','training','performance','helpdesk','admin','analytics'].forEach(t=>{
-                const el=document.getElementById(`ent-nav-${t}`); if(el) el.className='flex items-center space-x-3 px-3 py-2 rounded-xl text-slate-300 hover:bg-slate-800 transition';
+    async function loadFolders() {
+        if (!currentUser) return;
+        try {
+            const response = await fetch(`/api/private/folders/${currentUser}`);
+            const folders = await response.json();
+            const container = document.getElementById('foldersContainer');
+            container.innerHTML = "";
+            if (folders.length === 0) {
+                container.innerHTML = `<span class="text-gray-400 text-xs italic col-span-4">No folders created</span>`;
+                return;
+            }
+            folders.forEach(folder => {
+                const card = document.createElement('div');
+                card.className = "flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-2xl cursor-pointer transition group";
+                card.innerHTML = `
+                    <div class="flex items-center space-x-3 truncate" onclick="selectFolder('${folder}')">
+                        <i class="fa-solid fa-folder text-amber-400 text-lg"></i>
+                        <span class="text-sm font-medium text-gray-700 truncate">${folder}</span>
+                    </div>
+                    <button onclick="deleteFolder('${folder}')" class="text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition p-1"><i class="fa-solid fa-trash text-xs"></i></button>
+                `;
+                container.appendChild(card);
             });
-            const active=document.getElementById(`ent-nav-${tab}`); if(active) active.className='flex items-center space-x-3 px-3 py-2 rounded-xl bg-purple-600 text-white font-medium transition';
-            const c=document.getElementById('entTabContent'); c.innerHTML='<div class="ent-card text-xs text-slate-500">Loading...</div>';
-            try {
-                if(tab==='dashboard') await renderEntDashboard(c);
-                else if(tab==='employees') await renderEmployees(c);
-                else if(tab==='attendance') await renderAttendance(c);
-                else if(tab==='leave') await renderLeave(c);
-                else if(tab==='tasks') await renderTasks(c);
-                else if(tab==='projects') await renderProjects(c);
-                else if(tab==='communication') await renderCommunication(c);
-                else if(tab==='calendar') await renderCalendar(c);
-                else if(tab==='payroll') await renderPayroll(c);
-                else if(tab==='documents') await renderDocuments(c);
-                else if(tab==='training') await renderTraining(c);
-                else if(tab==='performance') await renderPerformance(c);
-                else if(tab==='helpdesk') await renderHelpdesk(c);
-                else if(tab==='admin') await renderAdmin(c);
-                else if(tab==='analytics') await loadTrafficIDS();
-            } catch(e) { c.innerHTML=`<div class="ent-card text-red-600 text-xs">${entEsc(e.message)}</div>`; }
-        }
+        } catch (err) { console.error("Error loading folders:", err); }
+    }
 
-        async function renderEntDashboard(c){
-            const d=await entFetch(`/api/enterprise/dashboard/${encodeURIComponent(currentUser)}`);
-            c.innerHTML=`<div class="ent-grid">
-                ${Object.entries(d.counts).map(([k,v])=>`<div class="ent-card"><div class="text-[10px] uppercase text-slate-400">${k.replaceAll('_',' ')}</div><div class="text-2xl font-bold text-slate-800 mt-1">${v}</div></div>`).join('')}</div>
-                ${entCard('Company Overview & Announcements', d.announcements.map(a=>`<div class="p-3 bg-slate-50 rounded-xl mb-2"><b>${entEsc(a.title)}</b><p class="ent-muted mt-1">${entEsc(a.message)}</p></div>`).join('') || '<p class="ent-muted">No announcements.</p>')}`;
-        }
+    function selectFolder(folderName) {
+        activeFolder = activeFolder === folderName ? null : folderName;
+        renderFiles(allFiles);
+    }
 
-        async function renderEmployees(c){
-            const rows=await entFetch('/api/enterprise/employees');
-            const canAdmin=['Department Admin','Super Admin'].includes(window.enterpriseEmployee?.role);
-            c.innerHTML=entCard('Employee Directory', `${canAdmin?`<div class="grid md:grid-cols-5 gap-2 mb-4">${entInput('newEmpId','Employee ID')}${entInput('newEmpName','Name')}${entInput('newEmpRole','Role')}${entInput('newEmpEmail','Email','email')}${entInput('newEmpPass','Password','password')}<button class="ent-btn ent-btn-primary" onclick="createEnterpriseEmployee()">Add Employee</button></div>`:''}<div class="overflow-x-auto"><table class="ent-table"><thead><tr><th>ID</th><th>Name</th><th>Department</th><th>Role</th><th>Email</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${entEsc(r.employee_id)}</td><td>${entEsc(r.name)}</td><td>${entEsc(r.department)}</td><td>${entEsc(r.role)}</td><td>${entEsc(r.email||'')}</td></tr>`).join('')}</tbody></table></div>`);
-        }
-        async function createEnterpriseEmployee(){
-            const payload={employee_id:document.getElementById('newEmpId').value.trim(),name:document.getElementById('newEmpName').value.trim(),department:currentDept,role:document.getElementById('newEmpRole').value.trim()||'Employee',email:document.getElementById('newEmpEmail').value.trim(),password:document.getElementById('newEmpPass').value};
-            try{await entFetch(`/api/enterprise/employees?actor_id=${encodeURIComponent(currentUser)}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});switchEntTab('employees',null);}catch(e){alert(e.message)}
-        }
+    async function promptCreateFolder() {
+        if (!currentUser) return;
+        const folderName = prompt("Enter folder name:");
+        if (!folderName) return;
+        try {
+            const res = await fetch('/api/private/folders', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name: folderName, username: currentUser })
+            });
+            if (res.ok) loadFolders();
+        } catch (err) { console.error(err); }
+    }
 
-        async function renderAttendance(c){
-            const rows=await entFetch(`/api/enterprise/attendance/${encodeURIComponent(currentUser)}`); 
-            c.innerHTML=entCard('Attendance Management',`<div class="flex gap-2 mb-4"><button class="ent-btn ent-btn-green" onclick="attendanceAction('check-in')">Check In</button><button class="ent-btn ent-btn-gray" onclick="attendanceAction('check-out')">Check Out</button></div><table class="ent-table"><thead><tr><th>Date</th><th>Check In</th><th>Check Out</th><th>Status</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${r.work_date}</td><td>${r.check_in||'-'}</td><td>${r.check_out\vert{}\vert{}'-'}</td><td>${r.status}</td></tr>`).join('')||'<tr><td colspan="4">No attendance records yet.</td></tr>'}</tbody></table>`);
+    async function deleteFolder(foldername) {
+        if (!confirm(`Delete folder "${foldername}" and all its files?`)) return;
+        try {
+            const res = await fetch(`/api/private/folders/${currentUser}/${foldername}`, { method: 'DELETE' });
+            if (res.ok) { activeFolder = null; loadFolders(); loadFiles(); }
+        } catch (e) { console.error(e); }
+    }
+
+    function openEnterprisePortal() { document.getElementById('enterpriseModal').classList.remove('hidden'); }
+    function closeEnterprisePortal() { document.getElementById('enterpriseModal').classList.add('hidden'); }
+
+    async function submitEnterpriseKey() {
+        const key = document.getElementById('enterpriseKeyInput').value;
+        const res = await fetch('/api/enterprise/verify-key', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ key }) });
+        if (res.ok) {
+            document.getElementById('entKeyStep').classList.add('hidden');
+            document.getElementById('entDeptStep').classList.remove('hidden');
+        } else { document.getElementById('enterpriseKeyMsg').innerText = "Invalid key!"; }
+    }
+
+    function loginDepartment() {
+        currentDept = document.getElementById('deptSelect').value;
+        currentUser = document.getElementById('deptIdInput').value;
+        closeEnterprisePortal();
+        document.getElementById('authScreen').classList.add('hidden');
+        document.getElementById('appContent').classList.remove('hidden');
+        document.getElementById('mainSidebar').classList.add('hidden');
+        document.getElementById('entSidebar').classList.remove('hidden');
+        document.getElementById('driveContentPanel').classList.add('hidden');
+        document.getElementById('enterpriseDashboard').classList.remove('hidden');
+        document.getElementById('deptTitle').innerText = `${currentDept} - Enterprise Hub`;
+        switchEntTab('dashboard', null);
+    }
+
+    function switchEntTab(tab, event) {
+        if (event) event.preventDefault();
+        ['dashboard', 'employees', 'attendance', 'leave', 'tasks', 'projects', 'communication', 'calendar', 'payroll', 'documents', 'training', 'performance', 'helpdesk', 'admin', 'analytics'].forEach(t => {
+            const el = document.getElementById(`ent-nav-${t}`);
+            if (el) el.className = "flex items-center space-x-3 px-3 py-2 rounded-xl text-slate-300 hover:bg-slate-800 transition";
+        });
+        document.getElementById(`ent-nav-${tab}`).className = "flex items-center space-x-3 px-3 py-2 rounded-xl bg-purple-600 text-white font-medium transition";
+
+        const container = document.getElementById('entTabContent');
+        if (tab === 'dashboard') {
+            container.innerHTML = `<h3 class="font-semibold text-slate-800 text-sm">Company Overview & Announcements</h3><div class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs space-y-2"><p>📢 <b>Notice:</b> Q3 Security Audit scheduled for Friday.</p><p>🚀 All nodes operating at 99.9% uptime.</p></div>`;
+        } else if (tab === 'employees') {
+            container.innerHTML = `<h3 class="font-semibold text-slate-800 text-sm">Employee Directory & Departments</h3><div class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs"><p><b>Nitin Mor</b> - Lead Security Engineer (Cybersecurity)</p><p><b>Bullaa Bhai</b> - Senior Operations Analyst (IT)</p></div>`;
+        } else if (tab === 'attendance') {
+            container.innerHTML = `<h3 class="font-semibold text-slate-800 text-sm">Attendance Management</h3><div class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs"><button onclick="alert('Checked In Successfully!')" class="bg-emerald-600 text-white px-4 py-2 rounded-lg">Check-In Now</button></div>`;
+        } else if (tab === 'leave') {
+            container.innerHTML = `<h3 class="font-semibold text-slate-800 text-sm">Leave Management</h3><div class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs space-y-2"><button onclick="alert('Leave Request Submitted!')" class="bg-blue-600 text-white px-3 py-1.5 rounded-lg">Apply for Leave</button></div>`;
+        } else if (tab === 'tasks') {
+            container.innerHTML = `<h3 class="font-semibold text-slate-800 text-sm">Kanban Tasks Board</h3><div class="grid grid-cols-3 gap-3 text-xs"><div class="bg-slate-100 p-3 rounded-xl"><b>To Do</b><p class="mt-2 text-slate-500">Deploy IDS patch</p></div><div class="bg-slate-100 p-3 rounded-xl"><b>In Progress</b><p class="mt-2 text-slate-500">Email verification setup</p></div><div class="bg-slate-100 p-3 rounded-xl"><b>Done</b><p class="mt-2 text-slate-500">Custom domain linking</p></div></div>`;
+        } else if (tab === 'projects') {
+            container.innerHTML = `<h3 class="font-semibold text-slate-800 text-sm">Active Projects</h3><div class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs"><p><b>Phoenix Shield Core:</b> 95% Completed</p></div>`;
+        } else if (tab === 'communication') {
+            container.innerHTML = `<h3 class="font-semibold text-slate-800 text-sm">Company Chat & Announcements</h3><div class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs"><p><b>HR Bot:</b> Welcome to the secure corporate gateway.</p></div>`;
+        } else if (tab === 'calendar') {
+            container.innerHTML = `<h3 class="font-semibold text-slate-800 text-sm">Integrated Meeting Scheduler</h3><div class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs"><p>📅 <b>Sprint Review Meeting</b> - Today at 4:00 PM</p></div>`;
+        } else if (tab === 'payroll') {
+            container.innerHTML = `<h3 class="font-semibold text-slate-800 text-sm">Payroll & Payslips</h3><div class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs"><p>💰 Monthly Salary Disbursed (Encrypted Ledger)</p></div>`;
+        } else if (tab === 'documents') {
+            container.innerHTML = `<h3 class="font-semibold text-slate-800 text-sm">Corporate Policies & Documents</h3><div class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs"><p>📄 Employee_Handbook_2026.pdf</p></div>`;
+        } else if (tab === 'training') {
+            container.innerHTML = `<h3 class="font-semibold text-slate-800 text-sm">AI HR Assistant & Training</h3><div class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs space-y-2"><input type="text" placeholder="Ask AI HR assistant..." class="w-full p-2 border rounded-lg"><button onclick="alert('AI HR is processing your query.')" class="bg-purple-600 text-white px-3 py-1.5 rounded-lg">Ask AI</button></div>`;
+        } else if (tab === 'performance') {
+            container.innerHTML = `<h3 class="font-semibold text-slate-800 text-sm">Performance KPIs & Reviews</h3><div class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs"><p>⭐ Rating: 4.9 / 5.0 (Exceptional)</p></div>`;
+        } else if (tab === 'helpdesk') {
+            container.innerHTML = `<h3 class="font-semibold text-slate-800 text-sm">Help Desk & IT Tickets</h3><div class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs space-y-2"><button onclick="alert('Ticket raised successfully!')" class="bg-red-600 text-white px-3 py-1.5 rounded-lg">Raise IT/HR Ticket</button></div>`;
+        } else if (tab === 'admin') {
+            container.innerHTML = `<h3 class="font-semibold text-slate-800 text-sm">Admin Panel (User Management & Roles)</h3><div class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs"><p>🔒 Full access privileges enabled for ${currentUser}</p></div>`;
+        } else if (tab === 'analytics') {
+            loadTrafficIDS();
         }
-        async function attendanceAction(action){try{await entFetch(`/api/enterprise/attendance/${encodeURIComponent(currentUser)}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action})});switchEntTab('attendance',null);}catch(e){alert(e.message)}}
+    }
 
-        async function renderLeave(c){
-            const rows=await entFetch(`/api/enterprise/leave/${encodeURIComponent(currentUser)}`);
-            c.innerHTML=entCard('Leave Management',`<div class="grid md:grid-cols-5 gap-2 mb-4">${entSelect('leaveType',['Casual Leave','Sick Leave','Earned Leave','Work From Home'])}${entInput('leaveStart','Start date','date')}${entInput('leaveEnd','End date','date')}${entInput('leaveReason','Reason')}<button class="ent-btn ent-btn-primary" onclick="applyEnterpriseLeave()">Apply Leave</button></div><table class="ent-table"><thead><tr><th>ID</th><th>Type</th><th>Dates</th><th>Reason</th><th>Status</th></tr></thead><tbody>${rows.map(r=>`<tr><td>#${r.id}</td><td>${r.leave_type}</td><td>${r.start_date} →${r.end_date}</td><td>${entEsc(r.reason)}</td><td>${r.status}</td></tr>`).join('')||'<tr><td colspan="5">No leave requests.</td></tr>'}</tbody></table>`);
-        }
-        async function applyEnterpriseLeave(){try{await entFetch(`/api/enterprise/leave/${encodeURIComponent(currentUser)}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({leave_type:document.getElementById('leaveType').value,start_date:document.getElementById('leaveStart').value,end_date:document.getElementById('leaveEnd').value,reason:document.getElementById('leaveReason').value})});switchEntTab('leave',null);}catch(e){alert(e.message)}}
+    async function loadTrafficIDS() {
+        const container = document.getElementById('entTabContent');
+        container.innerHTML = `
+            <div class="space-y-4">
+                <h3 class="font-semibold text-slate-800 text-sm">Real-time Traffic & Intrusion Detection (IDS)</h3>
+                <div class="overflow-x-auto border border-slate-200 rounded-xl">
+                    <table class="w-full text-left text-xs">
+                        <thead class="bg-slate-100 text-slate-700 uppercase">
+                            <tr>
+                                <th class="p-3">IP Address</th>
+                                <th class="p-3">Endpoint</th>
+                                <th class="p-3">Method</th>
+                                <th class="p-3">Threat Detection</th>
+                            </tr>
+                        </thead>
+                        <tbody id="trafficTableBody" class="divide-y divide-slate-200">
+                            <tr><td colspan="4" class="p-4 text-center text-slate-400">Loading traffic logs...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        `;
+        try {
+            const res = await fetch('/api/security/traffic-logs');
+            const logs = await res.json();
+            const tbody = document.getElementById('trafficTableBody');
+            if (logs.length === 0) { tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-slate-400">No traffic recorded yet.</td></tr>`; return; }
+            tbody.innerHTML = logs.map(l => {
+                const isHack = l.threat.includes("Hacker");
+                return `
+                    <tr class="${isHack ? 'bg-red-50' : 'hover:bg-slate-50'}">
+                        <td class="p-3 font-mono font-bold">${l.ip}</td>
+                        <td class="p-3">${l.endpoint}</td>
+                        <td class="p-3"><span class="bg-slate-200 px-1 py-0.5 rounded font-mono">${l.method}</span></td>
+                        <td class="p-3"><span class="px-2 py-1 rounded font-semibold ${isHack ? 'bg-red-100 text-red-700 animate-pulse' : 'bg-emerald-100 text-emerald-700'}">${l.threat}</span></td>
+                    </tr>
+                `;
+            }).join('');
+        } catch (e) { console.error(e); }
+    }
 
-        async function renderTasks(c){
-            const rows=await entFetch(`/api/enterprise/tasks/${encodeURIComponent(currentUser)}`);
-            c.innerHTML=entCard('Tasks & Kanban',`<div class="grid md:grid-cols-5 gap-2 mb-4">${entInput('taskTitle','Task title')}${entInput('taskDesc','Description')}${entInput('taskAssignee','Assign to Employee ID')}${entSelect('taskPriority',['Low','Medium','High','Critical'])}${entInput('taskDue','Due date','date')}<button class="ent-btn ent-btn-primary" onclick="createEnterpriseTask()">Create Task</button></div><div class="grid md:grid-cols-3 gap-3">${['To Do','In Progress','Done'].map(s=>`<div class="bg-slate-50 rounded-xl p-3"><b class="text-xs">${s}</b>${rows.filter(r=>r.status===s).map(r=>`<div class="bg-white border rounded-xl p-3 mt-2 text-xs"><b>${entEsc(r.title)}</b><p class="ent-muted">${entEsc(r.assigned_to)} · ${r.priority}</p><select class="ent-input mt-2" onchange="updateTaskStatus(${r.id},this.value)"><option ${s==='To Do'?'selected':''}>To Do</option><option ${s==='In Progress'?'selected':''}>In Progress</option><option ${s==='Done'?'selected':''}>Done</option></select></div>`).join('')}</div>`).join('')}</div>`);
-        }
-        async function createEnterpriseTask(){try{await entFetch(`/api/enterprise/tasks?actor_id=${encodeURIComponent(currentUser)}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({title:document.getElementById('taskTitle').value,description:document.getElementById('taskDesc').value,assigned_to:document.getElementById('taskAssignee').value,priority:document.getElementById('taskPriority').value,due_date:document.getElementById('taskDue').value})});switchEntTab('tasks',null);}catch(e){alert(e.message)}}
-        async function updateTaskStatus(id,status){try{await entFetch(`/api/enterprise/tasks/${id}?actor_id=${encodeURIComponent(currentUser)}`,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({status})});switchEntTab('tasks',null);}catch(e){alert(e.message)}}
+    function logout() {
+        location.reload();
+    }
+</script>
 
-        async function renderProjects(c){
-            const rows=await entFetch(`/api/enterprise/projects/${encodeURIComponent(currentUser)}`);
-            c.innerHTML=entCard('Projects',`<div class="grid md:grid-cols-4 gap-2 mb-4">${entInput('projectName','Project name')}${entInput('projectDesc','Description')}${entInput('projectProgress','Progress 0-100','number')}<button class="ent-btn ent-btn-primary" onclick="createEnterpriseProject()">Create Project</button></div>${rows.map(r=>`<div class="border rounded-xl p-3 mb-2"><div class="flex justify-between"><b class="text-xs">${entEsc(r.name)}</b><span class="ent-muted">${r.progress}%</span></div><p class="ent-muted mt-1">${entEsc(r.description)}</p><input type="range" min="0" max="100" value="${r.progress}" class="w-full mt-2" onchange="updateProjectProgress(${r.id},this.value)"></div>`).join('')||'<p class="ent-muted">No projects yet.</p>'}`);
-        }
-        async function createEnterpriseProject(){try{await entFetch(`/api/enterprise/projects?actor_id=${encodeURIComponent(currentUser)}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:document.getElementById('projectName').value,description:document.getElementById('projectDesc').value,progress:Number(document.getElementById('projectProgress').value||0)})});switchEntTab('projects',null);}catch(e){alert(e.message)}}
-        async function updateProjectProgress(id,progress){try{await entFetch(`/api/enterprise/projects/${id}?actor_id=${encodeURIComponent(currentUser)}`,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({progress:Number(progress)})});}catch(e){alert(e.message)}}
+</body> </html>
 
-        async function renderCommunication(c){
-            const rows=await entFetch(`/api/enterprise/messages/${encodeURIComponent(currentUser)}`);
-            c.innerHTML=entCard('Department Communication',`${entInput('deptMessage','Write a department message')}<button class="ent-btn ent-btn-primary mt-2" onclick="sendDepartmentMessage()">Post Message</button><div class="mt-4">${rows.map(r=>`<div class="border-b py-3"><b class="text-xs">${entEsc(r.sender_employee_id)}</b><span class="ent-muted ml-2">${new Date(r.created_at*1000).toLocaleString()}</span><p class="text-xs mt-1">${entEsc(r.message)}</p></div>`).join('')||'<p class="ent-muted mt-3">No messages yet.</p>'}</div>`);
-        }
-        async function sendDepartmentMessage(){try{await entFetch(`/api/enterprise/messages/${encodeURIComponent(currentUser)}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:document.getElementById('deptMessage').value})});switchEntTab('communication',null);}catch(e){alert(e.message)}}
-
-        async function renderCalendar(c){
-            const rows=await entFetch(`/api/enterprise/meetings/${encodeURIComponent(currentUser)}`);
-            c.innerHTML=entCard('Calendar & Meet',`<div class="grid md:grid-cols-5 gap-2 mb-4">${entInput('meetingTitle','Meeting title')}${entInput('meetingDate','Date','date')}${entInput('meetingTime','Time','time')}${entInput('meetingDesc','Description')}${entInput('meetingAttendees','Attendee IDs comma separated')}<button class="ent-btn ent-btn-primary" onclick="createEnterpriseMeeting()">Schedule Meeting</button></div><div>${rows.map(r=>`<div class="border rounded-xl p-3 mb-2"><div class="flex justify-between"><b class="text-xs">${entEsc(r.title)}</b><span class="ent-status ${r.status==='Scheduled'?'bg-emerald-100 text-emerald-700':'bg-slate-100 text-slate-600'}">${r.status}</span></div><p class="ent-muted mt-1">${r.meeting_date} at ${r.meeting_time} · Organizer ${entEsc(r.organizer_employee_id)}</p><p class="text-xs mt-1">${entEsc(r.description||'')}</p><div class="flex gap-2 mt-2"><button class="ent-btn ent-btn-gray" onclick="rescheduleMeeting(${r.id})">Reschedule</button>${r.status==='Scheduled'?`<button class="ent-btn ent-btn-red" onclick="cancelMeeting(${r.id})">Cancel</button>`:''}</div></div>`).join('')||'<p class="ent-muted">No meetings scheduled.</p>'}</div>`);
-        }
-        async function createEnterpriseMeeting(){try{const attendees=document.getElementById('meetingAttendees').value.split(',').map(x=>x.trim()).filter(Boolean);await entFetch(`/api/enterprise/meetings/${encodeURIComponent(currentUser)}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({title:document.getElementById('meetingTitle').value,meeting_date:document.getElementById('meetingDate').value,meeting_time:document.getElementById('meetingTime').value,description:document.getElementById('meetingDesc').value,attendees})});switchEntTab('calendar',null);}catch(e){alert(e.message)}}
-        async function rescheduleMeeting(id){const date=prompt('New date (YYYY-MM-DD):'); if(!date)return; const time=prompt('New time (HH:MM):'); if(!time)return; try{await entFetch(`/api/enterprise/meetings/${id}?actor_id=${encodeURIComponent(currentUser)}`,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({meeting_date:date,meeting_time:time})});switchEntTab('calendar',null);}catch(e){alert(e.message)}}
-        async function cancelMeeting(id){if(!confirm('Cancel this meeting? It will remain in history.'))return;try{await entFetch(`/api/enterprise/meetings/${id}?actor_id=${encodeURIComponent(currentUser)}`,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({status:'Cancelled'})});switchEntTab('calendar',null);}catch(e){alert(e.message)}}
-
-        async function renderPayroll(c){const rows=await entFetch(`/api/enterprise/payroll/${encodeURIComponent(currentUser)}`);c.innerHTML=entCard('Payroll & Payslips',rows.length?`<table class="ent-table"><thead><tr><th>Month</th><th>Basic</th><th>Allowances</th><th>Deductions</th><th>Net</th><th>Status</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${r.month}</td><td>₹${r.basic}</td><td>₹${r.allowances}</td><td>₹${r.deductions}</td><td>₹${r.net}</td><td>${r.status}</td></tr>`).join('')}</tbody></table>`:'<p class="ent-muted">No payroll records have been issued for this employee yet.</p>')}
-        async function renderDocuments(c){const rows=await entFetch(`/api/enterprise/documents/${encodeURIComponent(currentUser)}`);c.innerHTML=entCard('Corporate Documents',rows.length?rows.map(r=>`<div class="border rounded-xl p-3 mb-2 text-xs"><i class="fa-solid fa-file-contract text-purple-600 mr-2"></i>${entEsc(r.filename)} <span class="ent-muted">· ${entEsc(r.category)}</span></div>`).join(''):'<p class="ent-muted">No personal corporate documents assigned yet.</p>')}
-        async function renderTraining(c){const rows=await entFetch(`/api/enterprise/training/${encodeURIComponent(currentUser)}`);c.innerHTML=entCard('Training & AI HR',`<p class="ent-muted mb-3">Training progress is saved to your employee record.</p>${rows.map(r=>`<div class="border rounded-xl p-3 mb-2"><b class="text-xs">${entEsc(r.title)}</b><p class="ent-muted">${entEsc(r.description)}</p><div class="flex items-center gap-2 mt-2"><input type="range" min="0" max="100" value="${r.progress}" class="flex-1" onchange="saveTraining(${r.id},this.value)"><span class="text-xs">${r.progress}%</span></div><span class="ent-status bg-slate-100 text-slate-600 mt-2">${r.status}</span></div>`).join('')}`)}
-        async function saveTraining(id,p){try{await entFetch(`/api/enterprise/training/${id}?employee_id=${encodeURIComponent(currentUser)}&progress=${Number(p)}`,{method:'PATCH'});switchEntTab('training',null);}catch(e){alert(e.message)}}
-        async function renderPerformance(c){const rows=await entFetch(`/api/enterprise/kpi/${encodeURIComponent(currentUser)}`);c.innerHTML=entCard('Performance KPIs & Reviews',`<div class="grid md:grid-cols-4 gap-2 mb-4">${entInput('kpiTitle','Goal / KPI')}${entInput('kpiTarget','Target')}${entInput('kpiProgress','Progress 0-100','number')}${entInput('kpiNote','Review note')}<button class="ent-btn ent-btn-primary" onclick="saveKPI()">Save KPI</button></div>${rows.map(r=>`<div class="border rounded-xl p-3 mb-2"><b class="text-xs">${entEsc(r.title)}</b><p class="ent-muted">Target: ${entEsc(r.target)} · Progress: ${r.progress}%</p><p class="text-xs mt-1">${entEsc(r.review_note||'')}</p></div>`).join('')||'<p class="ent-muted">No KPI records yet.</p>'}`)}
-        async function saveKPI(){try{await entFetch(`/api/enterprise/kpi/${encodeURIComponent(currentUser)}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({title:document.getElementById('kpiTitle').value,target:document.getElementById('kpiTarget').value,progress:Number(document.getElementById('kpiProgress').value||0),review_note:document.getElementById('kpiNote').value})});switchEntTab('performance',null);}catch(e){alert(e.message)}}
-
-        async function renderHelpdesk(c){
-            const rows=await entFetch(`/api/enterprise/tickets/${encodeURIComponent(currentUser)}`);
-            c.innerHTML=entCard('Help Desk & IT Tickets',`<div class="grid md:grid-cols-4 gap-2 mb-4">${entSelect('ticketCategory',['IT Support','HR','Security Incident','Hardware','Software','Access Request'])}${entInput('ticketSubject','Subject')}${entSelect('ticketPriority',['Low','Medium','High','Critical'])}${entInput('ticketDescription','Describe the issue')}<button class="ent-btn ent-btn-primary" onclick="raiseEnterpriseTicket()">Raise Ticket</button></div><h4 class="text-xs font-semibold mb-2">Ticket History</h4><div>${rows.map(r=>`<div class="border rounded-xl p-3 mb-2"><div class="flex justify-between"><b class="text-xs">${entEsc(r.ticket_no)} ·${entEsc(r.subject)}</b><span class="ent-status ${r.status==='Closed'?'bg-slate-100 text-slate-600':'bg-amber-100 text-amber-700'}">${r.status}</span></div><p class="ent-muted mt-1">${r.category} · ${r.priority} ·${new Date(r.created_at*1000).toLocaleString()}</p><p class="text-xs mt-1">${entEsc(r.description)}</p>${r.status!=='Closed'?`<button class="ent-btn ent-btn-gray mt-2" onclick="closeEnterpriseTicket(${r.id})">Mark Resolved</button>`:''}</div>`).join('')||'<p class="ent-muted">No tickets raised yet.</p>'}</div>`);
-        }
-        async function raiseEnterpriseTicket(){try{await entFetch(`/api/enterprise/tickets/${encodeURIComponent(currentUser)}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({category:document.getElementById('ticketCategory').value,subject:document.getElementById('ticketSubject').value,description:document.getElementById('ticketDescription').value,priority:document.getElementById('ticketPriority').value})});switchEntTab('helpdesk',null);}catch(e){alert(e.message)}}
-        async function closeEnterpriseTicket(id){if(!confirm('Mark this ticket resolved?'))return;try{await entFetch(`/api/enterprise/tickets/${id}?actor_id=${encodeURIComponent(currentUser)}`,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({status:'Resolved',resolution:'Resolved by employee'})});switchEntTab('helpdesk',null);}catch(e){alert(e.message)}}
-
-        async function renderAdmin(c){
-            const logs=await entFetch(`/api/enterprise/audit/${encodeURIComponent(currentUser)}`); const notes=await entFetch(`/api/enterprise/notifications/${encodeURIComponent(currentUser)}`);
-            c.innerHTML=entCard('Admin / Audit / Notifications',`<div class="mb-4"><h4 class="text-xs font-semibold mb-2">Notifications</h4>${notes.map(n=>`<div class="p-2 rounded-lg ${n.is_read?'bg-slate-50':'bg-purple-50'} mb-1 text-xs"><b>${entEsc(n.title)}</b><p>${entEsc(n.message)}</p><button class="ent-btn ent-btn-gray mt-1" onclick="readNotification(${n.id})">${n.is_read?'Read':'Mark read'}</button></div>`).join('')||'<p class="ent-muted">No notifications.</p>'}</div><h4 class="text-xs font-semibold mb-2">Audit History</h4><table class="ent-table"><thead><tr><th>Time</th><th>Employee</th><th>Action</th><th>Entity</th><th>Details</th></tr></thead><tbody>${logs.map(l=>`<tr><td>${new Date(l.created_at*1000).toLocaleString()}</td><td>${entEsc(l.employee_id)}</td><td>${entEsc(l.action)}</td><td>${entEsc(l.entity)}</td><td>${entEsc(l.details)}</td></tr>`).join('')||'<tr><td colspan="5">No audit history.</td></tr>'}</tbody></table>`);
-        }
-        async function readNotification(id){try{await entFetch(`/api/enterprise/notifications/${id}?employee_id=${encodeURIComponent(currentUser)}`,{method:'PATCH'});switchEntTab('admin',null);}catch(e){alert(e.message)}}
-
-        async function loadTrafficIDS() {
-            const container=document.getElementById('entTabContent');
-            container.innerHTML=`<div class="space-y-4"><h3 class="font-semibold text-slate-800 text-sm">Real-time Traffic & Intrusion Detection (IDS)</h3><div class="overflow-x-auto border border-slate-200 rounded-xl"><table class="w-full text-left text-xs"><thead class="bg-slate-100 text-slate-700 uppercase"><tr><th class="p-3">IP Address</th><th class="p-3">Endpoint</th><th class="p-3">Method</th><th class="p-3">Status</th><th class="p-3">Threat Detection</th></tr></thead><tbody id="trafficTableBody"><tr><td colspan="5" class="p-4 text-center text-slate-400">Loading traffic logs...</td></tr></tbody></table></div></div>`;
-            try{const logs=await entFetch('/api/security/traffic-logs');const tbody=document.getElementById('trafficTableBody');tbody.innerHTML=logs.length?logs.map(l=>{const hack=l.threat.includes('Hacker');return `<tr class="${hack?'bg-red-50':'hover:bg-slate-50'}"><td class="p-3 font-mono font-bold">${entEsc(l.ip)}</td><td class="p-3">${entEsc(l.endpoint)}</td><td class="p-3">${entEsc(l.method)}</td><td class="p-3">${entEsc(l.status)}</td><td class="p-3"><span class="px-2 py-1 rounded font-semibold ${hack?'bg-red-100 text-red-700':'bg-emerald-100 text-emerald-700'}">${entEsc(l.threat)}</span></td></tr>`}).join(''):'<tr><td colspan="5" class="p-4 text-center text-slate-400">No traffic recorded yet.</td></tr>';}catch(e){console.error(e)}
-        }
-
-        function logout() {
-            localStorage.removeItem('phoenix_enterprise_employee');
-            localStorage.removeItem('phoenix_enterprise_department');
-            localStorage.removeItem('phoenix_enterprise_role');
-            location.reload();
-        }
-
-        window.addEventListener('DOMContentLoaded', () => { restoreEnterpriseSession(); });
-    </script>
-</body>
-</html>
+Close
