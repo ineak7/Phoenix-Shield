@@ -27,10 +27,7 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 
 
 def create_access_token(username: str, role: str, extra_claims: dict[str, Any] | None = None) -> str:
-    """
-    Create a signed JWT token containing identity and role information.
-    The token is valid for a limited time and can be used for protected routes.
-    """
+    """Create a signed JWT token containing identity and role information."""
     expire = datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     to_encode: dict[str, Any] = {"sub": username, "role": role, "exp": expire}
 
@@ -41,7 +38,7 @@ def create_access_token(username: str, role: str, extra_claims: dict[str, Any] |
 
 
 def decode_access_token(token: str) -> dict | None:
-    """Decode and validate a JWT token. Returns the payload dict or None if invalid."""
+    """Decode and validate a JWT token."""
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         return payload
@@ -50,7 +47,7 @@ def decode_access_token(token: str) -> dict | None:
 
 
 def get_current_user(token: str = Depends(oauth2_scheme)) -> dict:
-    """FastAPI dependency that validates a JWT token and returns the user payload."""
+    """FastAPI dependency that validates a JWT token."""
     if not token:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -81,7 +78,6 @@ def get_current_user(token: str = Depends(oauth2_scheme)) -> dict:
 
 def require_role(*allowed_roles: str):
     """FastAPI dependency that restricts access to specific user roles."""
-
     def role_checker(current_user: dict = Depends(get_current_user)) -> dict:
         if current_user["role"] not in allowed_roles:
             raise HTTPException(
@@ -89,11 +85,10 @@ def require_role(*allowed_roles: str):
                 detail="You do not have permission to access this resource.",
             )
         return current_user
-
     return role_checker
 
 
-# --- Permissions Mapping for Both User Tiers ---
+# --- Permissions Mapping ---
 PERMISSIONS = {
     "private_user": {"read", "write"},
     "staff": {"read", "write", "view_logs"},
@@ -104,24 +99,4 @@ PERMISSIONS = {
 
 def is_allowed(role: str, action: str) -> bool:
     """Checks if a given user role is permitted to perform a specific action."""
-    allowed_actions = PERMISSIONS.get(role, set())
-    return action in allowed_actions
-
-
-# --- Test Block ---
-if __name__ == "__main__":
-    print("--- Testing Authentication Module ---")
-
-    raw_pass = "securepassword123"
-    hashed = hash_password(raw_pass)
-    print(f"Hashed Password: {hashed}")
-    print(f"Password Verify Match: {verify_password(raw_pass, hashed)}")
-
-    token = create_access_token(username="neak", role="mnc_admin")
-    print(f"\nGenerated JWT Token:\n{token}")
-
-    decoded = decode_access_token(token)
-    print(f"\nDecoded Token Payload: {decoded}")
-
-    print(f"\nPermission Check (private_user trying to delete): {is_allowed('private_user', 'delete')}")
-    print(f"Permission Check (mnc_admin trying to manage software upgrade): {is_allowed('mnc_admin', 'manage_software_upgrade')}" )
+    return action in PERMISSIONS.get(role, set())
