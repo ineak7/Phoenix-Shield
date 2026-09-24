@@ -29,9 +29,20 @@ def hash_password(value: str) -> str:
 def init_db():
     conn = db()
     c = conn.cursor()
-    # Existing tables are preserved. Unlike the old version, users are NOT dropped on startup.
+    
+    # Base tables with safe column checks to prevent migration crashes on Render
     c.execute('''CREATE TABLE IF NOT EXISTS users (
         username TEXT PRIMARY KEY, password TEXT, phone TEXT, dob TEXT, is_verified INTEGER DEFAULT 0)''')
+    
+    # Safe check and add columns if missing in existing database
+    existing_cols = [row[1] for row in c.execute("PRAGMA table_info(users)").fetchall()]
+    if "phone" not in existing_cols:
+        c.execute("ALTER TABLE users ADD COLUMN phone TEXT")
+    if "dob" not in existing_cols:
+        c.execute("ALTER TABLE users ADD COLUMN dob TEXT")
+    if "is_verified" not in existing_cols:
+        c.execute("ALTER TABLE users ADD COLUMN is_verified INTEGER DEFAULT 0")
+
     c.execute('''CREATE TABLE IF NOT EXISTS folders (
         id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, username TEXT)''')
     c.execute('''CREATE TABLE IF NOT EXISTS dept_queries (
@@ -113,7 +124,7 @@ def init_db():
     c.execute("INSERT OR IGNORE INTO users (username,password,phone,dob,is_verified) VALUES (?,?,?,?,1)",
               ("NitinMor", "Nitin@1234", "+919876543210", "11/02/2004"))
 
-    # Seed enterprise demo employees. They are real persisted accounts, not arbitrary IDs.
+    # Seed enterprise demo employees.
     demo = [
         ("IT-ADMIN-01", "IT Administrator", "Information Technology (IT)", "Department Admin", "it.admin@phoenixshield.online", "Admin@123"),
         ("SEC-ADMIN-01", "Security Administrator", "Cybersecurity", "Department Admin", "security.admin@phoenixshield.online", "Admin@123"),
@@ -125,7 +136,6 @@ def init_db():
         c.execute("INSERT OR IGNORE INTO employees (employee_id,name,department,role,email,password_hash,created_at) VALUES (?,?,?,?,?,?,?)",
                   (emp[0], emp[1], emp[2], emp[3], emp[4], hash_password(emp[5]), time.time()))
 
-    # Seed a couple of courses/announcements only once.
     if c.execute("SELECT COUNT(*) FROM training_courses").fetchone()[0] == 0:
         c.execute("INSERT INTO training_courses(title,description,department) VALUES (?,?,?)",
                   ("Cybersecurity Awareness", "Security fundamentals and safe corporate computing.", None))
@@ -182,7 +192,7 @@ def read_root():
 
 @app.post("/api/private/register")
 def register_user(creds: UserCredentials):
-    conn=db();
+    conn=db()
     try:
         conn.execute("INSERT INTO users(username,password,phone,dob,is_verified) VALUES(?,?,?,?,0)", (creds.username,creds.password,creds.phone,creds.dob)); conn.commit()
     except sqlite3.IntegrityError:
@@ -466,7 +476,7 @@ def read_notification(notification_id:int,employee_id:str):
     conn=db(); conn.execute("UPDATE notifications SET is_read=1 WHERE id=? AND employee_id=?",(notification_id,employee_id)); conn.commit(); conn.close(); return {"message":"Notification marked read"}
 @app.get("/api/enterprise/audit/{employee_id}")
 def get_audit(employee_id:str):
-    e=get_emp(employee_id); conn=db();
+    e=get_emp(employee_id); conn=db()
     if e and e["role"] in ("Department Admin","Super Admin"): rows=conn.execute("SELECT * FROM audit_logs WHERE employee_id IN (SELECT employee_id FROM employees WHERE department=?) ORDER BY id DESC LIMIT 200",(e["department"],)).fetchall()
     else: rows=conn.execute("SELECT * FROM audit_logs WHERE employee_id=? ORDER BY id DESC LIMIT 100",(employee_id,)).fetchall()
     conn.close(); return [dict(r) for r in rows]
