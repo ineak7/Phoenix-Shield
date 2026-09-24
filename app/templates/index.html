@@ -301,7 +301,7 @@
                         loadFolders();
                     }
                 } else { msgDiv.innerText = data.detail || "Failed"; }
-            } catch (err) { console.error(err); }
+            } catch (err) { console.error(err); msgDiv.innerText = "Server connection error!"; }
         }
 
         async function loadFiles() {
