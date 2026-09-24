@@ -214,6 +214,7 @@ async def monitor_traffic(request: Request, call_next):
 class UserCredentials(BaseModel):
     username: str
     password: str
+    email: str = None
     phone: str = None
     dob: str = None
 
